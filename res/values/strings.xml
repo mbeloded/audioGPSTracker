@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AudioGPSTracker</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_kmph">Km/h</string>
+    <string name="title_mph">miles/h</string>
+    <string name="title_knots">Knots</string>
+    <string name="title_mps">m/s</string>
+    
+</resources>
