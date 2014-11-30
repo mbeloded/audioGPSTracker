@@ -11,7 +11,7 @@ import com.example.audiogpstracker.utils.MathUtils;
 
 public class Speed implements LocationListener, Constants {
 	
-	private static final String LOG = "Speed:";
+	private static final String LOG = "Speed";
 	private Integer data_points = 2; // how many data points to calculate for
     private Double[][] positions;
     private Long[] times;
@@ -78,14 +78,17 @@ public class Speed implements LocationListener, Constants {
 				speed = speed * 1.94384449d;
 				break;
 			}
+			
+			String double_speed = String.format("%.4f", speed);
+			
 			speed *= 100;//WTF?
 			String format_string = "%0" + padding + "d";
-//			String double_speed = String.format("%.4f", speed);
+			
 	    	String value_string = String.format(format_string, speed.intValue());
 			
 			speed_string = value_string;
 			
-			displayText(speed_string);
+			displayText(speed_string + " | "+double_speed);
 		}
     }
 

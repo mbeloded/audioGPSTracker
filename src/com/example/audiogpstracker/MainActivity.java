@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.audiogpstracker.data.Accelerometer;
+import com.example.audiogpstracker.data.Direction;
 import com.example.audiogpstracker.data.Speed;
 import com.example.audiogpstracker.fragments.FirstFragment;
 
@@ -27,12 +28,14 @@ public class MainActivity extends FragmentActivity implements Constants {
 	private FragmentManager fragmentManager;
 	private FragmentTransaction fragmentTransaction;
 	
-	private LocationManager lm;
+	private LocationManager locationManager;
 	private LocationListener locationListener;
 	
 	private SensorManager sensorManager;
 	private SensorEventListener accListener;
+	private SensorEventListener directionListener;
 	private Sensor accelerometer;
+	private Sensor direction;
 	
 	private Handler handler;
 
@@ -60,14 +63,15 @@ public class MainActivity extends FragmentActivity implements Constants {
 		handler = new Handler();
 		
 		// use the LocationManager class to obtain GPS locations
-        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);    
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);    
         locationListener = new Speed(){
         	@Override
         	public void displayText(final String speed){
         		Log.i(LOG, speed);
         		handler.post(new Runnable(){
         			public void run(){
-        				first.speedField.setText(speed);
+        				first.speedField.setText(getResources().getString(R.string.gps_speed) +
+        						" " + speed);
         			}
         		});
         		
@@ -75,24 +79,55 @@ public class MainActivity extends FragmentActivity implements Constants {
         };
         
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+        if (sensorManager.getDefaultSensor(accSensor) != null) {
 
         	accelerometer = sensorManager.getDefaultSensor(accSensor);
         	
 	        accListener = new Accelerometer(){
 	        	@Override
-	        	public void displayText(final String speed){
-	        		Log.i(LOG, speed);
-	        		first.acceleration.setText(speed);
+	        	public void displayText(final String acc){
+	        		Log.i(LOG, acc);
+	        		handler.post(new Runnable(){
+	        			public void run(){
+	        				first.acceleration.setText(getResources().getString(R.string.acc_speed) +
+	        						" " + acc);
+	        			}
+	        		});
 	        	}
 	        };
 	        
-	        sensorManager.registerListener(accListener,
-	        		accelerometer,
-	                accSensorRate);
+	        sensorManager.registerListener(accListener, accelerometer, accSensorRate);
         }
         else {
-        	first.acceleration.setText(R.string.no_accelerometer);
+        	handler.post(new Runnable(){
+    			public void run(){
+    				first.acceleration.setText(R.string.no_accelerometer);
+    			}
+        	});
+        }
+        
+        if (sensorManager.getDefaultSensor(directionSensor) != null) {
+        	
+        	direction = sensorManager.getDefaultSensor(directionSensor);
+        	
+	        directionListener = new Direction(){
+	        	@Override
+	        	public void displayText(final String direction) {
+	        		Log.i(LOG, direction);
+	        		handler.post(new Runnable(){
+	        			public void run(){
+	        				first.direction.setText(getResources().getString(R.string.direction) +
+	        						" " + direction);
+	        			}
+	        		});
+	        	}
+	        };
+        } else {
+        	handler.post(new Runnable(){
+    			public void run(){
+    				first.direction.setText(R.string.no_direction);
+    			}
+        	});
         }
 	}
 
@@ -130,13 +165,18 @@ public class MainActivity extends FragmentActivity implements Constants {
     }
 	
 	private void registerListeners() {
-		lm.requestLocationUpdates(provider, timeInterval, minDistance, locationListener);
+		locationManager.requestLocationUpdates(provider, timeInterval, minDistance, locationListener);
         sensorManager.registerListener(accListener, accelerometer, accSensorRate);
+     // for the system's orientation sensor registered listeners
+        sensorManager.registerListener(directionListener, direction, directionRate);
+
 	}
 	
 	private void unregisterListeners() {
-		lm.removeUpdates(locationListener);
+		locationManager.removeUpdates(locationListener);
 		sensorManager.unregisterListener(accListener);
+		// to stop the listener and save battery
+		sensorManager.unregisterListener(directionListener);
 	}
 
 //	@Override
