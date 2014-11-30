@@ -1,6 +1,6 @@
 package com.example.audiogpstracker;
 
-import com.example.audiogpstracker.fragments.MainFragment;
+import com.example.audiogpstracker.fragments.FirstFragment;
 
 import android.app.Activity;
 import android.app.ActionBar;
@@ -9,6 +9,9 @@ import android.content.Context;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
+	
+	private FirstFragment first;
+	private FragmentManager fragmentManager;
+	private FragmentTransaction fragmentTransaction;
 	
 	private LocationManager lm;
 	private LocationListener locationListener;
@@ -29,12 +36,17 @@ public class MainActivity extends Activity {
 		init();
 		
 		if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction()
-					.add(R.id.container, new MainFragment()).commit();
+			first = new FirstFragment();
+			
+			fragmentTransaction.add(R.id.container, first).commit();
 		}
 	}
 	
 	private void init() {
+		//init fragments
+		fragmentManager = getSupportFragmentManager();
+		fragmentTransaction = fragmentManager.beginTransaction();
+		
 		// use the LocationManager class to obtain GPS locations
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);    
         locationListener = new Speed();

@@ -1,5 +1,7 @@
 package com.example.audiogpstracker;
 
+import com.example.audiogpstracker.fragments.FirstFragment;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -70,7 +72,7 @@ public class Speed implements LocationListener {
     }
 
     public void displayText(int speed) {
-    	
+    	Log.i(LOG, "speed: "+speed);
     }
     
     public void onProviderDisabled(String provider) {

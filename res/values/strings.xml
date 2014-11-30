@@ -8,5 +8,6 @@
     <string name="title_mph">miles/h</string>
     <string name="title_knots">Knots</string>
     <string name="title_mps">m/s</string>
+    <string name="nil_speed">000</string>
     
 </resources>
