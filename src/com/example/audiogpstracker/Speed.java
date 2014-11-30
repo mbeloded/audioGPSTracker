@@ -1,7 +1,5 @@
 package com.example.audiogpstracker;
 
-import com.example.audiogpstracker.fragments.FirstFragment;
-
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -22,7 +20,7 @@ public class Speed implements LocationListener {
     
     public void onLocationChanged(Location loc) {   
 		if (loc != null) {
-			String speed_string;
+//			String speed_string;
 			Double d1;
 			Long t1;
 			Double speed = 0.0;
