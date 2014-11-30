@@ -21,4 +21,14 @@ public class MathUtils {
     	return (rad * 180.0 / Math.PI);
     }
     
+    public static float[] acceleration(float dX, float dY, float dZ, long interval){
+    	float acceleration[] = new float[3];
+    	
+    	//a=delta(velocity)/interval;
+    	acceleration[0] = dX/interval;
+    	acceleration[1] = dY/interval;
+    	acceleration[2] = dZ/interval;
+    	return acceleration;
+    }
+    
 }
