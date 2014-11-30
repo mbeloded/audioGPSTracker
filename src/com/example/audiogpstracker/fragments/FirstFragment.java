@@ -1,7 +1,7 @@
 package com.example.audiogpstracker.fragments;
 
-import com.example.audiogpstracker.OnDataPass;
 import com.example.audiogpstracker.R;
+import com.example.audiogpstracker.data.OnDataPass;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -14,7 +14,9 @@ import android.widget.TextView;
 
 public class FirstFragment extends Fragment {
 	
-	public TextView speedField;
+	public TextView 		speedField;
+	public TextView 		acceleration;
+	public TextView			direction;
 	public RelativeLayout 	firstFragm;
 	
 	public FirstFragment() {
@@ -34,7 +36,10 @@ public class FirstFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);
 		
-		speedField = (TextView) rootView.findViewById(R.id.speed);
+		speedField 		= (TextView) rootView.findViewById(R.id.speed);
+		acceleration 	= (TextView) rootView.findViewById(R.id.acceleration);
+		direction 		= (TextView) rootView.findViewById(R.id.direction);
+		
 		firstFragm = (RelativeLayout) rootView.findViewById(R.id.firstFragm);
 		
 		return rootView;

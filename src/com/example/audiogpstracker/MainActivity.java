@@ -1,8 +1,9 @@
 package com.example.audiogpstracker;
 
-import com.example.audiogpstracker.fragments.FirstFragment;
-
 import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -14,6 +15,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.audiogpstracker.data.Accelerometer;
+import com.example.audiogpstracker.data.Speed;
+import com.example.audiogpstracker.fragments.FirstFragment;
+
 public class MainActivity extends FragmentActivity implements Constants {
 	
 	private final String LOG = "MainActivity";
@@ -24,6 +29,10 @@ public class MainActivity extends FragmentActivity implements Constants {
 	
 	private LocationManager lm;
 	private LocationListener locationListener;
+	
+	private SensorManager sensorManager;
+	private SensorEventListener accListener;
+	private Sensor accelerometer;
 	
 	private Handler handler;
 
@@ -64,6 +73,27 @@ public class MainActivity extends FragmentActivity implements Constants {
         		
         	}
         };
+        
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+
+        	accelerometer = sensorManager.getDefaultSensor(accSensor);
+        	
+	        accListener = new Accelerometer(){
+	        	@Override
+	        	public void displayText(final String speed){
+	        		Log.i(LOG, speed);
+	        		first.acceleration.setText(speed);
+	        	}
+	        };
+	        
+	        sensorManager.registerListener(accListener,
+	        		accelerometer,
+	                accSensorRate);
+        }
+        else {
+        	first.acceleration.setText(R.string.no_accelerometer);
+        }
 	}
 
 	@Override
@@ -90,14 +120,24 @@ public class MainActivity extends FragmentActivity implements Constants {
 		// TODO Auto-generated method stub
 		super.onPause();
 		
-		lm.removeUpdates(locationListener);
+		unregisterListeners();
 	}
 	
 	@Override
     public void onResume() {
         super.onResume();
-        lm.requestLocationUpdates(provider, timeInterval, minDistance, locationListener);
+        registerListeners();
     }
+	
+	private void registerListeners() {
+		lm.requestLocationUpdates(provider, timeInterval, minDistance, locationListener);
+        sensorManager.registerListener(accListener, accelerometer, accSensorRate);
+	}
+	
+	private void unregisterListeners() {
+		lm.removeUpdates(locationListener);
+		sensorManager.unregisterListener(accListener);
+	}
 
 //	@Override
 //	public void onDataPass(String data) {

@@ -8,6 +8,10 @@
     <string name="title_mph">miles/h</string>
     <string name="title_knots">Knots</string>
     <string name="title_mps">m/s</string>
-    <string name="nil_speed">000</string>
+    <string name="nil">000</string>
+    <string name="gps_speed">GPS speed:</string>
+    <string name="acc_speed">ACC speed:</string>
+    <string name="direction">Direction:</string>
+    <string name="no_accelerometer">Device do not have accelerometer</string>
     
 </resources>
