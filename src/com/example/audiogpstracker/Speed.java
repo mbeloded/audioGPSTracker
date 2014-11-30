@@ -16,6 +16,11 @@ public class Speed implements LocationListener {
     
 	public Speed() {
 		//init vars here
+		// two arrays for position and time.
+        positions = new Double[data_points][2];
+        times = new Long[data_points];
+        
+        units = R.id.kmph;//by default
 	}
     
     public void onLocationChanged(Location loc) {   

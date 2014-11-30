@@ -13,10 +13,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements Constants {
 	
 	private final String LOG = "MainActivity";
 	private FirstFragment first;
+	
 	private FragmentManager fragmentManager;
 	private FragmentTransaction fragmentTransaction;
 	
@@ -25,22 +26,24 @@ public class MainActivity extends FragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_main);
 		
 		init();
 		
 		if (savedInstanceState == null) {
-			first = new FirstFragment();
-			
 			fragmentTransaction.add(R.id.container, first).commit();
 		}
+		
 	}
 	
 	private void init() {
 		//init fragments
 		fragmentManager = getSupportFragmentManager();
 		fragmentTransaction = fragmentManager.beginTransaction();
+		first = new FirstFragment();
 		
 		// use the LocationManager class to obtain GPS locations
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);    
@@ -48,6 +51,7 @@ public class MainActivity extends FragmentActivity {
         	@Override
         	public void displayText(int speed){
         		Log.i(LOG, "speed: "+speed);
+        		first.speedField.setText("speed:"+speed);
         	}
         };
 	}
@@ -82,8 +86,13 @@ public class MainActivity extends FragmentActivity {
 	@Override
     public void onResume() {
         super.onResume();
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        lm.requestLocationUpdates(provider, timeInterval, minDistance, locationListener);
     }
 
-	
+//	@Override
+//	public void onDataPass(String data) {
+//	    Log.d("LOG","hello " + data);
+//	    first.speedField.setText(data);
+//	}
+
 }
