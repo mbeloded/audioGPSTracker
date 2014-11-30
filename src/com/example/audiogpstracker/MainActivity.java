@@ -49,9 +49,9 @@ public class MainActivity extends FragmentActivity implements Constants {
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);    
         locationListener = new Speed(){
         	@Override
-        	public void displayText(int speed){
-        		Log.i(LOG, "speed: "+speed);
-        		first.speedField.setText("speed:"+speed);
+        	public void displayText(String speed){
+        		Log.i(LOG, speed);
+        		first.speedField.setText(speed);
         	}
         };
 	}

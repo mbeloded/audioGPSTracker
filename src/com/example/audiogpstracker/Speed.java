@@ -25,7 +25,7 @@ public class Speed implements LocationListener {
     
     public void onLocationChanged(Location loc) {   
 		if (loc != null) {
-//			String speed_string;
+			String speed_string = null;
 			Double d1;
 			Long t1;
 			Double speed = 0.0;
@@ -53,6 +53,7 @@ public class Speed implements LocationListener {
 							- times[(counter + (data_points - 1)) % data_points];
 				} catch (NullPointerException e) {
 					// all good, just not enough data yet.
+					speed_string = "no speed data\nException:"+e.getLocalizedMessage();
 				}
 				speed = d1 / t1; // m/s
 			}
@@ -70,12 +71,15 @@ public class Speed implements LocationListener {
 				speed = speed * 1.94384449d;
 				break;
 			}
-			displayText(speed.intValue());
+			
+			speed_string = "speed: "+speed;
+			
+			displayText(speed_string);
 		}
     }
 
-    public void displayText(int speed) {
-    	Log.i(LOG, "speed: "+speed);
+    public void displayText(String speed) {
+    	Log.i(LOG, speed);
     }
     
     public void onProviderDisabled(String provider) {
@@ -83,12 +87,10 @@ public class Speed implements LocationListener {
         Log.i(LOG, "provider disabled : " + provider);
     }
 
-
     public void onProviderEnabled(String provider) {
         // TODO Auto-generated method stub
         Log.i(LOG, "provider enabled : " + provider);
     }
-
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
