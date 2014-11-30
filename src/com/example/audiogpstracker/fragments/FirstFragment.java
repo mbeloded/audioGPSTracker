@@ -9,11 +9,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class FirstFragment extends Fragment {
 	
 	public TextView speedField;
+	public RelativeLayout 	firstFragm;
 	
 	public FirstFragment() {
 	}
@@ -33,6 +35,7 @@ public class FirstFragment extends Fragment {
 				false);
 		
 		speedField = (TextView) rootView.findViewById(R.id.speed);
+		firstFragm = (RelativeLayout) rootView.findViewById(R.id.firstFragm);
 		
 		return rootView;
 	}

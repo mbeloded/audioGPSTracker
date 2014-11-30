@@ -57,8 +57,11 @@ public class Speed implements LocationListener, Constants {
 				}
 				speed = d1 / t1; // m/s
 //			}
+			
 			counter = (counter + 1) % data_points;
 
+			Log.i(LOG, "speed: "+speed);
+			
 			// convert from m/s to specified units
 			switch (units) {
 			case R.id.kmph:
@@ -71,12 +74,12 @@ public class Speed implements LocationListener, Constants {
 				speed = speed * 1.94384449d;
 				break;
 			}
-			
+			speed *= 100;//WTF?
 			String format_string = "%0" + padding + "d";
-			String double_speed = String.format("%.4f", speed);
+//			String double_speed = String.format("%.4f", speed);
 	    	String value_string = String.format(format_string, speed.intValue());
 			
-			speed_string = value_string+"\n"+speed.intValue()+"\n"+double_speed;
+			speed_string = value_string;
 			
 			displayText(speed_string);
 		}
