@@ -6,6 +6,7 @@ import android.content.Context;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -23,6 +24,8 @@ public class MainActivity extends FragmentActivity implements Constants {
 	
 	private LocationManager lm;
 	private LocationListener locationListener;
+	
+	private Handler handler;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +48,20 @@ public class MainActivity extends FragmentActivity implements Constants {
 		fragmentTransaction = fragmentManager.beginTransaction();
 		first = new FirstFragment();
 		
+		handler = new Handler();
+		
 		// use the LocationManager class to obtain GPS locations
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);    
         locationListener = new Speed(){
         	@Override
-        	public void displayText(String speed){
+        	public void displayText(final String speed){
         		Log.i(LOG, speed);
-        		first.speedField.setText(speed);
+        		handler.post(new Runnable(){
+        			public void run(){
+        				first.speedField.setText(speed);
+        			}
+        		});
+        		
         	}
         };
 	}

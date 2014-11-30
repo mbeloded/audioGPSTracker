@@ -5,7 +5,7 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
 
-public class Speed implements LocationListener {
+public class Speed implements LocationListener, Constants {
 	
 	private static final String LOG = "Speed:";
 	private Integer data_points = 2; // how many data points to calculate for
@@ -36,10 +36,10 @@ public class Speed implements LocationListener {
 			positions[counter][1] = loc.getLongitude();
 			times[counter] = loc.getTime();
 
-			if (loc.hasSpeed()) {
-				speed = loc.getSpeed() * 1.0; // need to * 1.0 to get into a
-												// double for some reason...
-			} else {
+//			if (loc.hasSpeed()) {
+//				speed = loc.getSpeed() * 1.0; // need to * 1.0 to get into a
+//												// double for some reason...
+//			} else {
 				try {
 					// get the distance and time between the current position,
 					// and the previous position.
@@ -56,7 +56,7 @@ public class Speed implements LocationListener {
 					speed_string = "no speed data\nException:"+e.getLocalizedMessage();
 				}
 				speed = d1 / t1; // m/s
-			}
+//			}
 			counter = (counter + 1) % data_points;
 
 			// convert from m/s to specified units
@@ -72,13 +72,17 @@ public class Speed implements LocationListener {
 				break;
 			}
 			
-			speed_string = "speed: "+speed;
+			String format_string = "%0" + padding + "d";
+			String double_speed = String.format("%.4f", speed);
+	    	String value_string = String.format(format_string, speed.intValue());
+			
+			speed_string = value_string+"\n"+speed.intValue()+"\n"+double_speed;
 			
 			displayText(speed_string);
 		}
     }
 
-    public void displayText(String speed) {
+    public void displayText(final String speed) {
     	Log.i(LOG, speed);
     }
     

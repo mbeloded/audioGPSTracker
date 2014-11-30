@@ -13,6 +13,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center_vertical|center_horizontal"
-        android:text="@string/nil_speed" />
+        android:text="@string/nil_speed"
+        android:textSize="96dp" />
 
 </RelativeLayout>
