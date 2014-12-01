@@ -54,6 +54,7 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 		firstFragm = (RelativeLayout) rootView.findViewById(R.id.firstFragm);
 		
 		toogleButton.setOnCheckedChangeListener(this);
+		toogleButton.setChecked(true);
 		
 		return rootView;
 	}
@@ -64,8 +65,10 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 		if (isChecked) {
 //			acceleration.setText("x=0 | y=0");
 			DmafManager.getInstance(getActivity()).setPlaySound(true);
+			DmafManager.getInstance(getActivity()).init();
 			Toast.makeText(getActivity(), "Sound will start play on 360 degree value", Toast.LENGTH_SHORT).show();
 		} else {
+			DmafManager.getInstance(getActivity()).stopPlaying();
 			DmafManager.getInstance(getActivity()).setPlaySound(false);
 			Toast.makeText(getActivity(), "Souds are off", Toast.LENGTH_SHORT).show();
 		}

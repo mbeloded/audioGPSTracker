@@ -23,7 +23,7 @@ public class DmafManager implements IDmafListener {
 	private Dmaf mDmaf;
 	private DmParametersPOD mPod;
 	
-	private boolean mIsNeedToPlaySound = false;
+	private boolean mIsNeedToPlaySound = true;
 	
 	private DmafManager(Activity activity) {
 		mActivity = activity;
@@ -73,6 +73,15 @@ public class DmafManager implements IDmafListener {
 		mDmaf.tell("play_sound");
 	}
 	
+	public void startAudio() {
+		PdAudio.startAudio(mActivity);
+	}
+	
+	public void stopPlaying() {
+		PdAudio.stopAudio();
+		PdAudio.release();
+	}
+	
 	public void setPlaySound(boolean value) {
 		mIsNeedToPlaySound = value;
 	}
@@ -80,5 +89,4 @@ public class DmafManager implements IDmafListener {
 	public boolean isNeedToPlaySound() {
 		return mIsNeedToPlaySound;
 	}
-
 }
