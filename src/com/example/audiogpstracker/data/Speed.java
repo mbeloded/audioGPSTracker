@@ -81,7 +81,7 @@ public class Speed implements LocationListener, Constants {
 			
 			String double_speed = String.format("%.4f", speed);
 			
-			speed *= 100;//WTF?
+			speed *= 1000;//WTF?
 			String format_string = "%0" + padding + "d";
 			
 	    	String value_string = String.format(format_string, speed.intValue());

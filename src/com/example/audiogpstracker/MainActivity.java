@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import com.example.audiogpstracker.data.Accelerometer;
 import com.example.audiogpstracker.data.Direction;
@@ -55,6 +56,10 @@ public class MainActivity extends FragmentActivity implements Constants {
 	}
 	
 	private void init() {
+		
+        // keep screen on
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
 		//init fragments
 		fragmentManager = getSupportFragmentManager();
 		fragmentTransaction = fragmentManager.beginTransaction();
@@ -70,8 +75,10 @@ public class MainActivity extends FragmentActivity implements Constants {
         		Log.i(LOG, speed);
         		handler.post(new Runnable(){
         			public void run(){
-        				first.speedField.setText(getResources().getString(R.string.gps_speed) +
-        						" " + speed);
+        				if(first.speedField!=null){
+	        				first.speedField.setText(getResources().getString(R.string.gps_speed) +
+	        						" " + speed);
+        				}
         			}
         		});
         		
@@ -89,8 +96,10 @@ public class MainActivity extends FragmentActivity implements Constants {
 	        		Log.i(LOG, acc);
 	        		handler.post(new Runnable(){
 	        			public void run(){
-	        				first.acceleration.setText(getResources().getString(R.string.acc_speed) +
+	        				if(first.acceleration!=null){
+	        					first.acceleration.setText(getResources().getString(R.string.acc_speed) +
 	        						" " + acc);
+	        				}
 	        			}
 	        		});
 	        	}
@@ -101,7 +110,9 @@ public class MainActivity extends FragmentActivity implements Constants {
         else {
         	handler.post(new Runnable(){
     			public void run(){
-    				first.acceleration.setText(R.string.no_accelerometer);
+    				if(first.acceleration!=null){
+    					first.acceleration.setText(R.string.no_accelerometer);
+    				}
     			}
         	});
         }
@@ -116,8 +127,10 @@ public class MainActivity extends FragmentActivity implements Constants {
 	        		Log.i(LOG, direction);
 	        		handler.post(new Runnable(){
 	        			public void run(){
-	        				first.direction.setText(getResources().getString(R.string.direction) +
+	        				if(first.direction!=null){
+	        					first.direction.setText(getResources().getString(R.string.direction) +
 	        						" " + direction);
+	        				}
 	        			}
 	        		});
 	        	}
@@ -125,7 +138,9 @@ public class MainActivity extends FragmentActivity implements Constants {
         } else {
         	handler.post(new Runnable(){
     			public void run(){
-    				first.direction.setText(R.string.no_direction);
+    				if(first.direction!=null){
+    					first.direction.setText(R.string.no_direction);
+    				}
     			}
         	});
         }

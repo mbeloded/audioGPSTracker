@@ -92,12 +92,20 @@
 	        android:gravity = "center">
 	
 	        <ToggleButton
-	            android:id="@+id/toggleButton1"
+	            android:id="@+id/dmafSnd"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:text="DMAF" />
+	        
+	       	<Button
+			     android:id="@+id/clearAcc"
+			     android:layout_width="wrap_content"
+			     android:layout_height="wrap_content"
+			     android:text="clear max acceleration" 
+			     />
 	
 	    </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>
