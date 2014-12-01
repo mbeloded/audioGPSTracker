@@ -20,10 +20,14 @@ import com.example.audiogpstracker.data.Accelerometer;
 import com.example.audiogpstracker.data.Direction;
 import com.example.audiogpstracker.data.Speed;
 import com.example.audiogpstracker.fragments.FirstFragment;
+import com.example.audiogpstracker.utils.DmafManager;
 
 public class MainActivity extends FragmentActivity implements Constants {
 	
 	private final String LOG = "MainActivity";
+	
+	private static MainActivity instance = null;
+	
 	private FirstFragment first;
 	
 	private FragmentManager fragmentManager;
@@ -39,6 +43,8 @@ public class MainActivity extends FragmentActivity implements Constants {
 	private Sensor direction;
 	
 	private Handler handler;
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,8 @@ public class MainActivity extends FragmentActivity implements Constants {
 		if (savedInstanceState == null) {
 			fragmentTransaction.add(R.id.container, first).commit();
 		}
+		
+		instance = this;
 		
 	}
 	
@@ -72,7 +80,7 @@ public class MainActivity extends FragmentActivity implements Constants {
         locationListener = new Speed(){
         	@Override
         	public void displayText(final String speed){
-        		Log.i(LOG, speed);
+//        		Log.i(LOG, speed);
         		handler.post(new Runnable(){
         			public void run(){
         				if(first.speedField!=null){
@@ -93,7 +101,7 @@ public class MainActivity extends FragmentActivity implements Constants {
 	        accListener = new Accelerometer(){
 	        	@Override
 	        	public void displayText(final String acc){
-	        		Log.i(LOG, acc);
+//	        		Log.i(LOG, acc);
 	        		handler.post(new Runnable(){
 	        			public void run(){
 	        				if(first.acceleration!=null){
@@ -124,7 +132,7 @@ public class MainActivity extends FragmentActivity implements Constants {
 	        directionListener = new Direction(){
 	        	@Override
 	        	public void displayText(final String direction) {
-	        		Log.i(LOG, direction);
+//	        		Log.i(LOG, direction);
 	        		handler.post(new Runnable(){
 	        			public void run(){
 	        				if(first.direction!=null){
@@ -144,6 +152,8 @@ public class MainActivity extends FragmentActivity implements Constants {
     			}
         	});
         }
+        
+        DmafManager.getInstance(this).init();
 	}
 
 	@Override
@@ -192,6 +202,12 @@ public class MainActivity extends FragmentActivity implements Constants {
 		sensorManager.unregisterListener(accListener);
 		// to stop the listener and save battery
 		sensorManager.unregisterListener(directionListener);
+	}
+	
+	public static MainActivity getInstnce() {
+		if (instance != null) 
+			return instance;
+		return null;
 	}
 
 //	@Override

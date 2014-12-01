@@ -1,6 +1,8 @@
 package com.example.audiogpstracker.data;
 
 import com.example.audiogpstracker.Constants;
+import com.example.audiogpstracker.MainActivity;
+import com.example.audiogpstracker.utils.DmafManager;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -24,6 +26,9 @@ public class Direction implements SensorEventListener, Constants {
 		if(event.sensor.getType()==directionSensor){
 			float degree = Math.round(event.values[0]);
 			displayText(Float.toString(degree) + " degrees");
+			
+			if (Math.round(event.values[0]) == 360 && DmafManager.getInstance(MainActivity.getInstnce()).isNeedToPlaySound())
+				DmafManager.getInstance(MainActivity.getInstnce()).playAudio();
 		}
 
 	}
