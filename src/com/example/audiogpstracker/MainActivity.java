@@ -104,7 +104,7 @@ public class MainActivity extends FragmentActivity implements Constants {
 //	        		Log.i(LOG, acc);
 	        		handler.post(new Runnable(){
 	        			public void run(){
-	        				if(first.acceleration!=null){
+	        				if(first.acceleration!=null) {
 	        					first.acceleration.setText(getResources().getString(R.string.acc_speed) +
 	        						" " + acc);
 	        				}
