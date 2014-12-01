@@ -1,14 +1,13 @@
 package com.example.audiogpstracker.data;
 
-import com.example.audiogpstracker.Constants;
-import com.example.audiogpstracker.R;
-import com.example.audiogpstracker.utils.MathUtils;
-
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
+
+import com.example.audiogpstracker.Constants;
+import com.example.audiogpstracker.utils.MathUtils;
 
 public class Accelerometer implements SensorEventListener, Constants {
 
