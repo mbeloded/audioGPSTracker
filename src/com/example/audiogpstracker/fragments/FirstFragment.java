@@ -2,6 +2,7 @@ package com.example.audiogpstracker.fragments;
 
 import com.example.audiogpstracker.R;
 import com.example.audiogpstracker.data.OnDataPass;
+import com.example.audiogpstracker.utils.DmafManager;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -16,6 +17,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class FirstFragment extends Fragment implements OnCheckedChangeListener {
@@ -28,6 +30,7 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 	public Button			clearAccBtn;
 	
 	public FirstFragment() {
+		
 	}
 	
 	OnDataPass dataPasser;
@@ -60,9 +63,15 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		// TODO Auto-generated method stub
-//		if (isChecked)
+		if (isChecked) {
 //			acceleration.setText("x=0 | y=0");
-//		
+			DmafManager.getInstance(getActivity()).setPlaySound(true);
+			Toast.makeText(getActivity(), "Sound will start play on 360 degree value", Toast.LENGTH_SHORT).show();
+		} else {
+			DmafManager.getInstance(getActivity()).setPlaySound(false);
+			Toast.makeText(getActivity(), "Souds are off", Toast.LENGTH_SHORT).show();
+		}
+		
 	}
 	
 //	public void clearAcc_OnClick(){
