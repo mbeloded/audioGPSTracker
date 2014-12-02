@@ -28,7 +28,7 @@ public class Direction implements SensorEventListener, Constants {
 		if(event.sensor.getType()==directionSensor){
 			float degree = Math.round(event.values[0]);
 			displayText(Float.toString(degree) + " degrees \nlast: " +
-						Float.toString(lastDegree) + " \ndelta: " +
+						Float.toString(lastDegree) + " \nCompass change: " +
 						Float.toString(degree - lastDegree));
 			
 			if (degree == 360 && DmafManager.getInstance(MainActivity.getInstnce()).isNeedToPlaySound())

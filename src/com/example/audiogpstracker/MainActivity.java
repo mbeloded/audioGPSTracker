@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
@@ -25,6 +24,7 @@ import com.example.audiogpstracker.utils.DmafManager;
 public class MainActivity extends FragmentActivity implements Constants {
 	
 	private final String LOG = "MainActivity";
+	private static final String TAG_FIRST_FRAGMENT = "task_fragment";
 	
 	private static MainActivity instance = null;
 	
@@ -53,10 +53,6 @@ public class MainActivity extends FragmentActivity implements Constants {
 		
 		init();
 		
-		if (savedInstanceState == null) {
-			fragmentTransaction.add(R.id.container, first).commit();
-		}
-		
 		instance = this;
 		
 	}
@@ -69,7 +65,14 @@ public class MainActivity extends FragmentActivity implements Constants {
 		//init fragments
 		fragmentManager = getSupportFragmentManager();
 		fragmentTransaction = fragmentManager.beginTransaction();
-		first = new FirstFragment();
+		first = (FirstFragment) fragmentManager.findFragmentByTag(TAG_FIRST_FRAGMENT);
+
+	    // If the Fragment is non-null, then it is being retained
+	    // over a configuration change.
+	    if (first == null) {
+	    	first = new FirstFragment();
+			fragmentTransaction.add(R.id.container, first, TAG_FIRST_FRAGMENT).commit();
+	    }
 		
 		handler = new Handler();
 		
@@ -82,7 +85,7 @@ public class MainActivity extends FragmentActivity implements Constants {
         		handler.post(new Runnable(){
         			public void run(){
         				if(first.speedField!=null){
-	        				first.speedField.setText(getResources().getString(R.string.gps_speed) +
+        					first.speedField.setText(getResources().getString(R.string.gps_speed) +
 	        						" " + speed);
         				}
         			}

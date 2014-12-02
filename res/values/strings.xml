@@ -12,7 +12,7 @@
     <string name="gps_nil">GPS speed: 000</string>
     <string name="gps_speed">GPS speed:</string>
     <string name="acc_speed">ACC speed:</string>
-    <string name="direction">Direction:</string>
+    <string name="direction">Compass:</string>
     <string name="no_accelerometer">Unable to detect acceleration</string>
     <string name="no_direction">Unable to detect direction changes</string>
     

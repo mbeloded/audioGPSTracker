@@ -1,13 +1,8 @@
 package com.example.audiogpstracker.fragments;
 
-import com.example.audiogpstracker.R;
-import com.example.audiogpstracker.data.Accelerometer;
-import com.example.audiogpstracker.data.OnDataPass;
-import com.example.audiogpstracker.utils.DmafManager;
-
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.audiogpstracker.R;
+import com.example.audiogpstracker.data.Accelerometer;
+import com.example.audiogpstracker.utils.DmafManager;
+
 public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 	
 	private Handler mHandler = null;
@@ -32,46 +31,56 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 	public ToggleButton 	toogleButton;
 	public Button			clearAccBtn;
 	
-	public FirstFragment() {
-		
-	}
+//	private static FirstFragment instance;
 	
-	OnDataPass dataPasser;
+//	public static FirstFragment getInstance(){
+//		if (instance == null) {
+//			return instance = new FirstFragment();
+//		}
+//		return instance;
+//	}
 
 	@Override
 	public void onAttach(Activity a) {
 	    super.onAttach(a);
-	    mHandler = new Handler();
-//	    dataPasser = (OnDataPass) a;
+	    this.mHandler = new Handler();
 	}
+//	
+//	@Override
+//	public void onCreate(Bundle savedInstanceState) {
+//		// Retain this fragment across configuration changes.
+//	    setRetainInstance(true);
+//	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
+		setRetainInstance(true);
+		
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);
 		
-		speedField 		= (TextView) rootView.findViewById(R.id.speed);
-		acceleration 	= (TextView) rootView.findViewById(R.id.acceleration);
-		direction 		= (TextView) rootView.findViewById(R.id.direction);
-		toogleButton	= (ToggleButton) rootView.findViewById(R.id.dmafSnd);
-		clearAccBtn		= (Button)	rootView.findViewById(R.id.clearAcc);
+		this.speedField 		= (TextView) rootView.findViewById(R.id.speed);
+		this.acceleration 	= (TextView) rootView.findViewById(R.id.acceleration);
+		this.direction 		= (TextView) rootView.findViewById(R.id.direction);
+		this.toogleButton	= (ToggleButton) rootView.findViewById(R.id.dmafSnd);
+		this.clearAccBtn		= (Button)	rootView.findViewById(R.id.clearAcc);
 		
-		firstFragm = (RelativeLayout) rootView.findViewById(R.id.firstFragm);
+		this.firstFragm = (RelativeLayout) rootView.findViewById(R.id.firstFragm);
 		
-		toogleButton.setOnCheckedChangeListener(this);
-		toogleButton.setChecked(true);
+		this.toogleButton.setOnCheckedChangeListener(this);
+		this.toogleButton.setChecked(true);
 		
 		OnClickListener listener = new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				clearAcc_OnClick();
-				
+				clearAcc_OnClick();	
 			}
 		};
 		
-		clearAccBtn.setOnClickListener(listener);
+		this.clearAccBtn.setOnClickListener(listener);
 		
 		return rootView;
 	}
@@ -80,7 +89,6 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		// TODO Auto-generated method stub
 		if (isChecked) {
-//			acceleration.setText("x=0 | y=0");
 			DmafManager.getInstance(getActivity()).setPlaySound(true);
 			DmafManager.getInstance(getActivity()).init();
 			Toast.makeText(getActivity(), "Sound will start play on 360 degree value", Toast.LENGTH_SHORT).show();
@@ -93,7 +101,7 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 	}
 
 	public void clearAcc_OnClick() {
-		mHandler.post(new Runnable() {			
+		this.mHandler.post(new Runnable() {			
 			@Override
 			public void run() {
 				Accelerometer.getInstance().resetAcceleration();

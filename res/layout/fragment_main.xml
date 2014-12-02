@@ -44,7 +44,8 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
-	        android:gravity = "center">
+	        android:gravity = "center"
+	        android:visibility="gone">
 		    <TextView
 		        android:id="@+id/accTitle"
 		        android:layout_width="wrap_content"
@@ -63,7 +64,7 @@
 	    
 	    <LinearLayout 
 	        android:id="@+id/dir"
-	        android:layout_below="@id/acc"
+	        android:layout_below="@id/gps"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
