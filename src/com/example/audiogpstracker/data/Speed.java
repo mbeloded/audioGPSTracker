@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.audiogpstracker.Constants;
+import com.example.audiogpstracker.MainActivity;
 import com.example.audiogpstracker.R;
+import com.example.audiogpstracker.utils.DmafManager;
 import com.example.audiogpstracker.utils.MathUtils;
 
 public class Speed implements LocationListener, Constants {
@@ -17,6 +19,7 @@ public class Speed implements LocationListener, Constants {
     private Long[] times;
     private Integer units; // Preference integers
     private Integer counter = 0;
+    private String unit_string;
     
 	public Speed() {
 		//init vars here
@@ -25,6 +28,11 @@ public class Speed implements LocationListener, Constants {
         times = new Long[data_points];
         
         units = R.id.kmph;//by default
+        unit_string = MainActivity.getInsatnce().getResources().getString(R.string.title_kmph);
+	}
+	
+	public String getUnitStr(){
+		return unit_string;
 	}
     
     public void onLocationChanged(Location loc) {   
@@ -70,12 +78,15 @@ public class Speed implements LocationListener, Constants {
 			switch (units) {
 			case R.id.kmph:
 				speed = speed * 3.6d;
+				unit_string = MainActivity.getInsatnce().getResources().getString(R.string.title_kmph);
 				break;
 			case R.id.mph:
 				speed = speed * 2.23693629d;
+				unit_string = MainActivity.getInsatnce().getResources().getString(R.string.title_mph);
 				break;
 			case R.id.knots:
 				speed = speed * 1.94384449d;
+				unit_string = MainActivity.getInsatnce().getResources().getString(R.string.title_knots);
 				break;
 			}
 			
@@ -88,7 +99,10 @@ public class Speed implements LocationListener, Constants {
 			
 			speed_string = value_string;
 			
-			displayText(speed_string + " | "+double_speed);
+			displayText(speed_string);
+			
+			if(DmafManager.getInstance(MainActivity.getInsatnce()).isNeedToPlaySound())
+				DmafManager.getInstance(MainActivity.getInsatnce()).setSpeed(speed.floatValue());
 		}
     }
 

@@ -53,8 +53,6 @@ public class MainActivity extends FragmentActivity implements Constants {
 		
 		init();
 		
-		instance = this;
-		
 	}
 	
 	private void init() {
@@ -78,6 +76,9 @@ public class MainActivity extends FragmentActivity implements Constants {
 		
 		// use the LocationManager class to obtain GPS locations
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);    
+		
+		instance = this;
+		
         locationListener = new Speed(){
         	@Override
         	public void displayText(final String speed){
@@ -86,7 +87,7 @@ public class MainActivity extends FragmentActivity implements Constants {
         			public void run(){
         				if(first.speedField!=null){
         					first.speedField.setText(getResources().getString(R.string.gps_speed) +
-	        						" " + speed);
+	        						" " + speed + " " + getUnitStr());
         				}
         			}
         		});
@@ -205,7 +206,7 @@ public class MainActivity extends FragmentActivity implements Constants {
 		sensorManager.unregisterListener(directionListener);
 	}
 	
-	public static MainActivity getInstnce() {
+	public static MainActivity getInsatnce() {
 		if (instance != null) 
 			return instance;
 		return null;

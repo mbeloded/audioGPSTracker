@@ -30,27 +30,13 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 	public RelativeLayout 	firstFragm;
 	public ToggleButton 	toogleButton;
 	public Button			clearAccBtn;
-	
-//	private static FirstFragment instance;
-	
-//	public static FirstFragment getInstance(){
-//		if (instance == null) {
-//			return instance = new FirstFragment();
-//		}
-//		return instance;
-//	}
 
 	@Override
 	public void onAttach(Activity a) {
 	    super.onAttach(a);
-	    this.mHandler = new Handler();
+	    if(this.mHandler == null)
+	    	this.mHandler = new Handler();
 	}
-//	
-//	@Override
-//	public void onCreate(Bundle savedInstanceState) {
-//		// Retain this fragment across configuration changes.
-//	    setRetainInstance(true);
-//	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
