@@ -1,14 +1,17 @@
 package com.example.audiogpstracker.fragments;
 
 import com.example.audiogpstracker.R;
+import com.example.audiogpstracker.data.Accelerometer;
 import com.example.audiogpstracker.data.OnDataPass;
 import com.example.audiogpstracker.utils.DmafManager;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -19,6 +22,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class FirstFragment extends Fragment implements OnCheckedChangeListener {
+	
+	private Handler mHandler = null;
 	
 	public TextView 		speedField;
 	public TextView 		acceleration;
@@ -36,6 +41,7 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 	@Override
 	public void onAttach(Activity a) {
 	    super.onAttach(a);
+	    mHandler = new Handler();
 //	    dataPasser = (OnDataPass) a;
 	}
 
@@ -56,6 +62,17 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 		toogleButton.setOnCheckedChangeListener(this);
 		toogleButton.setChecked(true);
 		
+		OnClickListener listener = new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				clearAcc_OnClick();
+				
+			}
+		};
+		
+		clearAccBtn.setOnClickListener(listener);
+		
 		return rootView;
 	}
 
@@ -75,4 +92,16 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 		
 	}
 
+	public void clearAcc_OnClick() {
+		mHandler.post(new Runnable() {			
+			@Override
+			public void run() {
+				Accelerometer.getInstance().resetAcceleration();
+				acceleration.setText(getResources().getString(R.string.acc_speed) +
+						" " + "x=0 | y=0");				
+			}
+		});
+		
+	}
+	
 }

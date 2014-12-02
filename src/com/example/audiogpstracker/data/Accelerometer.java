@@ -10,6 +10,8 @@ import com.example.audiogpstracker.Constants;
 import com.example.audiogpstracker.utils.MathUtils;
 
 public class Accelerometer implements SensorEventListener, Constants {
+	
+	private static Accelerometer instance = null;
 
 	private float lastX, lastY, lastZ;
     private float deltaX = 0;
@@ -30,6 +32,14 @@ public class Accelerometer implements SensorEventListener, Constants {
 	public Accelerometer(){
 		gravity = new float[3];
 		linear_acceleration = new float[3];
+		
+		instance = this;
+	}
+	
+	public static Accelerometer getInstance() {
+		if (instance == null)
+			instance = new Accelerometer();
+		return instance;
 	}
 	
 	@Override
@@ -42,7 +52,7 @@ public class Accelerometer implements SensorEventListener, Constants {
 	public void onSensorChanged(SensorEvent se) {
 		
 		// check sensor type
-		if(se.sensor.getType()==accSensor){
+		if(se.sensor.getType()==accSensor) {
 			lastX = se.values[SensorManager.DATA_X];
 		    lastY = se.values[SensorManager.DATA_Y];
 		    lastZ = se.values[SensorManager.DATA_Z];
@@ -133,5 +143,14 @@ public class Accelerometer implements SensorEventListener, Constants {
 //			deltaZMax = deltaZ;
 //			maxZ.setText(Float.toString(deltaZMax));
 //		}
+	}
+	
+	public void resetAcceleration() {
+		  deltaX = 0;
+	      deltaY = 0;
+	      deltaZ = 0;
+	      deltaXMax = 0;
+		  deltaYMax = 0;
+		  deltaZMax = 0;
 	}
 }
