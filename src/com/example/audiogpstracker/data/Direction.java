@@ -13,6 +13,8 @@ public class Direction implements SensorEventListener, Constants {
 
 	private static final String LOG = "Direction";
 	
+	private float lastDegree = 0.f;
+	
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
@@ -25,10 +27,14 @@ public class Direction implements SensorEventListener, Constants {
 		// get the angle around the z-axis rotated
 		if(event.sensor.getType()==directionSensor){
 			float degree = Math.round(event.values[0]);
-			displayText(Float.toString(degree) + " degrees");
+			displayText(Float.toString(degree) + " degrees \nlast: " +
+						Float.toString(lastDegree) + " \ndelta: " +
+						Float.toString(degree - lastDegree));
 			
-			if (Math.round(event.values[0]) == 360 && DmafManager.getInstance(MainActivity.getInstnce()).isNeedToPlaySound())
+			if (degree == 360 && DmafManager.getInstance(MainActivity.getInstnce()).isNeedToPlaySound())
 				DmafManager.getInstance(MainActivity.getInstnce()).playAudio();
+			
+			lastDegree = degree;
 		}
 
 	}

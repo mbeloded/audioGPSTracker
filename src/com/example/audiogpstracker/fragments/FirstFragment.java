@@ -74,10 +74,5 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 		}
 		
 	}
-	
-//	public void clearAcc_OnClick(){
-//		acceleration.setText(getResources().getString(R.string.acc_speed) +
-//				" " + "x=0 | y=0");
-//	}
-//	
+
 }

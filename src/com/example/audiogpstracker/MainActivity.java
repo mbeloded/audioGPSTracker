@@ -44,8 +44,6 @@ public class MainActivity extends FragmentActivity implements Constants {
 	
 	private Handler handler;
 	
-	
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
