@@ -21,10 +21,12 @@ import com.example.audiogpstracker.data.Direction;
 import com.example.audiogpstracker.data.Speed;
 import com.example.audiogpstracker.fragments.FirstFragment;
 import com.example.audiogpstracker.utils.DmafManager;
+import com.example.audiogpstracker.utils.GPSStateManager;
 
 public class MainActivity extends FragmentActivity implements Constants {
 	
 	private final String LOG = "MainActivity";
+	private static final String TAG_FIRST_FRAGMENT = "task_fragment";
 	
 	private static MainActivity instance = null;
 	
@@ -44,8 +46,6 @@ public class MainActivity extends FragmentActivity implements Constants {
 	
 	private Handler handler;
 	
-	
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -53,13 +53,12 @@ public class MainActivity extends FragmentActivity implements Constants {
 		
 		setContentView(R.layout.activity_main);
 		
-		init();
+//		if (GPSStateManager.getInstance(this).checkGPSEnable()) {
+			init();
+//		} else {
+//			GPSStateManager.getInstance(this).buildGPSEnableDialog();
+//		}	
 		
-		if (savedInstanceState == null) {
-			fragmentTransaction.add(R.id.container, first).commit();
-		}
-		
-		instance = this;
 		
 	}
 	
@@ -71,25 +70,50 @@ public class MainActivity extends FragmentActivity implements Constants {
 		//init fragments
 		fragmentManager = getSupportFragmentManager();
 		fragmentTransaction = fragmentManager.beginTransaction();
-		first = new FirstFragment();
+		first = (FirstFragment) fragmentManager.findFragmentByTag(TAG_FIRST_FRAGMENT);
+
+	    // If the Fragment is non-null, then it is being retained
+	    // over a configuration change.
+	    if (first == null) {
+	    	first = new FirstFragment();
+			fragmentTransaction.add(R.id.container, first, TAG_FIRST_FRAGMENT).commit();
+	    }
 		
 		handler = new Handler();
 		
 		// use the LocationManager class to obtain GPS locations
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);    
+		
+		instance = this;
+		
         locationListener = new Speed(){
         	@Override
         	public void displayText(final String speed){
 //        		Log.i(LOG, speed);
-        		handler.post(new Runnable(){
-        			public void run(){
+//        		handler.post(new Runnable(){
+//        			public void run(){
         				if(first.speedField!=null){
-	        				first.speedField.setText(getResources().getString(R.string.gps_speed) +
-	        						" " + speed);
+        					first.speedField.setText(getResources().getString(R.string.gps_speed) +
+	        						" " + speed + " " + getUnitStr());
         				}
-        			}
-        		});
-        		
+//        			}
+//        		});	
+        	}
+        	
+        	@Override
+        	public void displayTextSpeed(final String speed) {
+        		if(first.speedSecondField!=null) {
+					first.speedSecondField.setText(getResources().getString(R.string.gps_speed_formula) +
+    						" " + speed + " " + getUnitStr());
+				}
+        	}
+        	
+        	@Override
+        	public void displayDebugInfo(String info) {
+        		if (ISDEBUG) 
+        			first.mDebugTextView.setText(info);
+        		else
+        			first.mDebugTextView.setText("");
         	}
         };
         
@@ -179,14 +203,15 @@ public class MainActivity extends FragmentActivity implements Constants {
 	public void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		
-		unregisterListeners();
+//		if (GPSStateManager.getInstance(this).checkGPSEnable())
+			unregisterListeners();
 	}
 	
 	@Override
     public void onResume() {
         super.onResume();
-        registerListeners();
+//        if (GPSStateManager.getInstance(this).checkGPSEnable())
+        	registerListeners();
     }
 	
 	private void registerListeners() {
@@ -204,7 +229,7 @@ public class MainActivity extends FragmentActivity implements Constants {
 		sensorManager.unregisterListener(directionListener);
 	}
 	
-	public static MainActivity getInstnce() {
+	public static MainActivity getInsatnce() {
 		if (instance != null) 
 			return instance;
 		return null;

@@ -73,6 +73,11 @@ public class DmafManager implements IDmafListener {
 		mDmaf.tell("play_sound");
 	}
 	
+	public void setSpeed(float speed) 
+	{
+		mDmaf.tell("speed", speed);
+	}
+	
 	public void startAudio() {
 		PdAudio.startAudio(mActivity);
 	}
