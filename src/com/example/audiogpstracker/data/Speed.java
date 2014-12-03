@@ -48,10 +48,10 @@ public class Speed implements LocationListener, Constants {
 			positions[counter][1] = loc.getLongitude();
 			times[counter] = loc.getTime();
 
-//			if (loc.hasSpeed()) {
-//				speed = loc.getSpeed() * 1.0; // need to * 1.0 to get into a
-//												// double for some reason...
-//			} else {
+			if (loc.hasSpeed()) {
+				speed = loc.getSpeed() * 1.0; // need to * 1.0 to get into a
+												// double for some reason...
+			} else {
 				try {
 					// get the distance and time between the current position,
 					// and the previous position.
@@ -68,7 +68,7 @@ public class Speed implements LocationListener, Constants {
 					speed_string = "no speed data\nException:"+e.getLocalizedMessage();
 				}
 				speed = d1 / t1; // m/s
-//			}
+			}
 			
 			counter = (counter + 1) % data_points;
 

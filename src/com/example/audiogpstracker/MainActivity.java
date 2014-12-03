@@ -83,14 +83,14 @@ public class MainActivity extends FragmentActivity implements Constants {
         	@Override
         	public void displayText(final String speed){
 //        		Log.i(LOG, speed);
-        		handler.post(new Runnable(){
-        			public void run(){
+//        		handler.post(new Runnable(){
+//        			public void run(){
         				if(first.speedField!=null){
         					first.speedField.setText(getResources().getString(R.string.gps_speed) +
 	        						" " + speed + " " + getUnitStr());
         				}
-        			}
-        		});
+//        			}
+//        		});
         		
         	}
         };
