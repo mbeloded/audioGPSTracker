@@ -30,6 +30,8 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 	public RelativeLayout 	firstFragm;
 	public ToggleButton 	toogleButton;
 	public Button			clearAccBtn;
+	
+	public TextView 		mDebugTextView;
 
 	@Override
 	public void onAttach(Activity a) {
@@ -52,6 +54,8 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 		this.direction 		= (TextView) rootView.findViewById(R.id.direction);
 		this.toogleButton	= (ToggleButton) rootView.findViewById(R.id.dmafSnd);
 		this.clearAccBtn		= (Button)	rootView.findViewById(R.id.clearAcc);
+		
+		mDebugTextView = (TextView) rootView.findViewById(R.id.debug_tv);
 		
 		this.firstFragm = (RelativeLayout) rootView.findViewById(R.id.firstFragm);
 		

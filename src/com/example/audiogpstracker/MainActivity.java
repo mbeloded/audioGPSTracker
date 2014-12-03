@@ -90,8 +90,15 @@ public class MainActivity extends FragmentActivity implements Constants {
 	        						" " + speed + " " + getUnitStr());
         				}
 //        			}
-//        		});
-        		
+//        		});	
+        	}
+        	
+        	@Override
+        	public void displayDebugInfo(String info) {
+        		if (ISDEBUG) 
+        			first.mDebugTextView.setText(info);
+        		else
+        			first.mDebugTextView.setText("");
         	}
         };
         
