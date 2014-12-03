@@ -20,6 +20,7 @@ import com.example.audiogpstracker.data.Direction;
 import com.example.audiogpstracker.data.Speed;
 import com.example.audiogpstracker.fragments.FirstFragment;
 import com.example.audiogpstracker.utils.DmafManager;
+import com.example.audiogpstracker.utils.GPSStateManager;
 
 public class MainActivity extends FragmentActivity implements Constants {
 	
@@ -51,7 +52,12 @@ public class MainActivity extends FragmentActivity implements Constants {
 		
 		setContentView(R.layout.activity_main);
 		
-		init();
+//		if (GPSStateManager.getInstance(this).checkGPSEnable()) {
+			init();
+//		} else {
+//			GPSStateManager.getInstance(this).buildGPSEnableDialog();
+//		}	
+		
 		
 	}
 	
@@ -188,14 +194,15 @@ public class MainActivity extends FragmentActivity implements Constants {
 	public void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		
-		unregisterListeners();
+//		if (GPSStateManager.getInstance(this).checkGPSEnable())
+			unregisterListeners();
 	}
 	
 	@Override
     public void onResume() {
         super.onResume();
-        registerListeners();
+//        if (GPSStateManager.getInstance(this).checkGPSEnable())
+        	registerListeners();
     }
 	
 	private void registerListeners() {
