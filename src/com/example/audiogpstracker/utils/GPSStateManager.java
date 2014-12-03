@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Handler;
 
+import com.example.audiogpstracker.MainActivity;
 import com.example.audiogpstracker.R;
 
 public class GPSStateManager {
@@ -39,6 +40,14 @@ public class GPSStateManager {
 		return true;
 	}
 	
+	public boolean isNetworkEnable() {
+		if (mLocationManager == null) return false;
+		
+		if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+			return false;
+		return true;
+	}
+	
 	public void buildGPSEnableDialog() {
 		String dialogMessage = mActivity.getResources().getString(R.string.gps_dialog_message);
 		String positive_button_text = mActivity.getResources().getString(R.string.gps_dialog_positive_button);
@@ -61,7 +70,7 @@ public class GPSStateManager {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
-				mActivity.finish();				
+				System.exit(0);				
 			}
 		});
 		
@@ -72,7 +81,6 @@ public class GPSStateManager {
 			public void run() {
 				alert.show();				
 			}
-		});
-		
+		});		
 	}
 }

@@ -1,6 +1,7 @@
 package com.example.audiogpstracker;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -53,16 +54,14 @@ public class MainActivity extends FragmentActivity implements Constants {
 		
 		setContentView(R.layout.activity_main);
 		
-//		if (GPSStateManager.getInstance(this).checkGPSEnable()) {
+		if (GPSStateManager.getInstance(this).checkGPSEnable()) {
 			init();
-//		} else {
-//			GPSStateManager.getInstance(this).buildGPSEnableDialog();
-//		}	
-		
-		
+		} else {
+			GPSStateManager.getInstance(this).buildGPSEnableDialog();
+		}		
 	}
 	
-	private void init() {
+	public void init() {
 		
         // keep screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -76,14 +75,19 @@ public class MainActivity extends FragmentActivity implements Constants {
 	    // over a configuration change.
 	    if (first == null) {
 	    	first = new FirstFragment();
-			fragmentTransaction.add(R.id.container, first, TAG_FIRST_FRAGMENT).commit();
+			fragmentTransaction.add(R.id.container, first, TAG_FIRST_FRAGMENT).commitAllowingStateLoss();
 	    }
 		
 		handler = new Handler();
 		
 		// use the LocationManager class to obtain GPS locations
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);    
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
+		for(String s : locationManager.getAllProviders())
+		{
+			Log.d(LOG, "Providers : " + s);
+		}
+
 		instance = this;
 		
         locationListener = new Speed(){
@@ -125,7 +129,6 @@ public class MainActivity extends FragmentActivity implements Constants {
 	        accListener = new Accelerometer(){
 	        	@Override
 	        	public void displayText(final String acc){
-//	        		Log.i(LOG, acc);
 	        		handler.post(new Runnable(){
 	        			public void run(){
 	        				if(first.acceleration!=null) {
@@ -156,7 +159,6 @@ public class MainActivity extends FragmentActivity implements Constants {
 	        directionListener = new Direction(){
 	        	@Override
 	        	public void displayText(final String direction) {
-//	        		Log.i(LOG, direction);
 	        		handler.post(new Runnable(){
 	        			public void run(){
 	        				if(first.direction!=null){
@@ -201,16 +203,15 @@ public class MainActivity extends FragmentActivity implements Constants {
 	
 	@Override
 	public void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
-//		if (GPSStateManager.getInstance(this).checkGPSEnable())
-			unregisterListeners();
+		if (GPSStateManager.getInstance(this).checkGPSEnable())
+			unregisterListeners();			
 	}
 	
 	@Override
     public void onResume() {
         super.onResume();
-//        if (GPSStateManager.getInstance(this).checkGPSEnable())
+        if (GPSStateManager.getInstance(this).checkGPSEnable())
         	registerListeners();
     }
 	
@@ -241,4 +242,22 @@ public class MainActivity extends FragmentActivity implements Constants {
 //	    first.speedField.setText(data);
 //	}
 
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != 0) return;
+		
+		switch (requestCode) {
+		case 911:
+			if (GPSStateManager.getInstance(this).checkGPSEnable()) {
+				init();
+			} else {
+				GPSStateManager.getInstance(this).buildGPSEnableDialog();
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
 }
