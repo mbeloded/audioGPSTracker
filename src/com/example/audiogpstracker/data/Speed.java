@@ -12,37 +12,39 @@ import com.example.audiogpstracker.utils.DmafManager;
 import com.example.audiogpstracker.utils.MathUtils;
 
 public class Speed implements LocationListener, Constants {
-	
+
 	private static final String LOG = "Speed";
 	private Integer data_points = 2; // how many data points to calculate for
-    private Double[][] positions;
-    private Long[] times;
-    private Integer units; // Preference integers
-    private Integer counter = 0;
-    private String unit_string;
-    private String logStr = null;
-    
+	private Double[][] positions;
+	private Long[] times;
+	private Integer units; // Preference integers
+	private Integer counter = 0;
+	private String unit_string;
+	private String logStr = null;
+
 	public Speed() {
-		//init vars here
+		// init vars here
 		// two arrays for position and time.
-        positions = new Double[data_points][2];
-        times = new Long[data_points];
-        
-        units = R.id.kmph;//by default
-        unit_string = MainActivity.getInsatnce().getResources().getString(R.string.title_kmph);
-        logStr = "";
+		positions = new Double[data_points][2];
+		times = new Long[data_points];
+
+		units = R.id.kmph;// by default
+		unit_string = MainActivity.getInsatnce().getResources()
+				.getString(R.string.title_kmph);
+		logStr = "";
 	}
-	
-	public String getUnitStr(){
+
+	public String getUnitStr() {
 		return unit_string;
 	}
-    
-    public void onLocationChanged(Location loc) {   
+
+	public void onLocationChanged(Location loc) {   
 		if (loc != null) {
 			String speed_string = null;
 			Double d1;
 			Long t1;
 			Double speed = 0.0;
+			Double speed2 = 0.0;
 			d1 = 0.0;
 			t1 = 0l;
 
@@ -55,7 +57,8 @@ public class Speed implements LocationListener, Constants {
 												// double for some reason...
 				logStr = "Method: getSpeed()";
 //				displayDebugInfo("Method: getSpeed()");
-			} else {
+			} 
+//			else {
 				try {
 					logStr = "Method: formula()";
 //					displayDebugInfo("Method: calculate by formula()");
@@ -73,9 +76,9 @@ public class Speed implements LocationListener, Constants {
 					// all good, just not enough data yet.
 					speed_string = "no speed data\nException:"+e.getLocalizedMessage();
 				}
-				speed = d1 / t1; // m/s
-				speed *= 1000;//WTF?
-			}
+				speed2 = d1 / t1; // m/s
+				speed2 *= 1000;//WTF?
+//			}
 			
 			counter = (counter + 1) % data_points;
 
@@ -97,15 +100,17 @@ public class Speed implements LocationListener, Constants {
 				break;
 			}
 			
-//			String double_speed = String.format("%.4f", speed);
+//			String format_string = "%0" + padding + "d";
 			
-			String format_string = "%0" + padding + "d";
+			String value_string = String.format("%.3f", speed.doubleValue());
+			String spped2_value = String.format("%.3f", speed2.doubleValue());
 			
-	    	String value_string = String.format(format_string, speed.intValue());
+//	    	String value_string = String.format(format_string, speed.intValue());
 			
 			speed_string = value_string;
 			
 			displayText(speed_string);
+			displayTextSpeed(spped2_value);
 			
 			if(DmafManager.getInstance(MainActivity.getInsatnce()).isNeedToPlaySound()) {
 				DmafManager.getInstance(MainActivity.getInsatnce()).setSpeed(speed.floatValue());
@@ -120,49 +125,53 @@ public class Speed implements LocationListener, Constants {
 		}
     }
 
-    public void displayText(final String speed) {
-    	Log.i(LOG, speed);
-    }
-    
-    public void displayDebugInfo(String info) {
-    	if (ISDEBUG)
-    		Log.i(LOG, info);
-    	else
-    		return;
-    }
-    
-    public void onProviderDisabled(String provider) {
-        // TODO Auto-generated method stub
-        Log.i(LOG, "provider disabled : " + provider);
-    }
+	public void displayText(final String speed) {
+		Log.i(LOG, speed);
+	}
+	
+	public void displayTextSpeed(final String speed) {
+		Log.i(LOG, speed);
+	}
 
-    public void onProviderEnabled(String provider) {
-        // TODO Auto-generated method stub
-        Log.i(LOG, "provider enabled : " + provider);
-    }
-    
-    private String getStatus(int st) {
-    	String status = null;
-    	switch(st){
-    	case 0:
-    		status = "OUT_OF_SERVICE";
-    		break;
-    	case 1:
-    		status = "TEMPORARILY_UNAVAILABLE";
-    		break;
-    	case 2:
-    		status = "AVAILABLE";
-    		break;
-    	}
-    	return status;
-    }
+	public void displayDebugInfo(String info) {
+		if (ISDEBUG)
+			Log.i(LOG, info);
+		else
+			return;
+	}
 
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        // TODO Auto-generated method stub
-        Log.i(LOG, "status changed : " + extras.toString());
-        logStr += "\nstatus changed : " + getStatus(status);
-        
-        displayDebugInfo(logStr);
-    }
-               
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		Log.i(LOG, "provider disabled : " + provider);
+	}
+
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		Log.i(LOG, "provider enabled : " + provider);
+	}
+
+	private String getStatus(int st) {
+		String status = null;
+		switch (st) {
+		case 0:
+			status = "OUT_OF_SERVICE";
+			break;
+		case 1:
+			status = "TEMPORARILY_UNAVAILABLE";
+			break;
+		case 2:
+			status = "AVAILABLE";
+			break;
+		}
+		return status;
+	}
+
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		Log.i(LOG, "status changed : " + extras.toString());
+		logStr += "\nstatus changed : " + getStatus(status);
+
+		displayDebugInfo(logStr);
+	}
+
 }

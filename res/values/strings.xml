@@ -11,9 +11,17 @@
     <string name="nil">000</string>
     <string name="gps_nil">GPS speed: 000</string>
     <string name="gps_speed">GPS speed:</string>
+    <string name="gps_speed_formula">GPS speed (formula):</string>
     <string name="acc_speed">ACC speed:</string>
     <string name="direction">Compass:</string>
     <string name="no_accelerometer">Unable to detect acceleration</string>
     <string name="no_direction">Unable to detect direction changes</string>
+    
+    
+    
+    <string name="gps_dialog_message">Your GPS seems to be disabled, do you want to enable it?</string>
+    <string name="gps_dialog_positive_button">Enable</string>
+    <string name="gps_dialog_negative_button">Cancel</string>
+    
     
 </resources>

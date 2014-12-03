@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
@@ -97,6 +98,14 @@ public class MainActivity extends FragmentActivity implements Constants {
         				}
 //        			}
 //        		});	
+        	}
+        	
+        	@Override
+        	public void displayTextSpeed(final String speed) {
+        		if(first.speedSecondField!=null) {
+					first.speedSecondField.setText(getResources().getString(R.string.gps_speed_formula) +
+    						" " + speed + " " + getUnitStr());
+				}
         	}
         	
         	@Override

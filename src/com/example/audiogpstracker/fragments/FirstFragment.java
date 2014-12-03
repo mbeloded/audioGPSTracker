@@ -25,6 +25,7 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 	private Handler mHandler = null;
 	
 	public TextView 		speedField;
+	public TextView			speedSecondField;
 	public TextView 		acceleration;
 	public TextView			direction;
 	public RelativeLayout 	firstFragm;
@@ -50,6 +51,7 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 				false);
 		
 		this.speedField 		= (TextView) rootView.findViewById(R.id.speed);
+		this.speedSecondField = (TextView) rootView.findViewById(R.id.speed2_value);
 		this.acceleration 	= (TextView) rootView.findViewById(R.id.acceleration);
 		this.direction 		= (TextView) rootView.findViewById(R.id.direction);
 		this.toogleButton	= (ToggleButton) rootView.findViewById(R.id.dmafSnd);
