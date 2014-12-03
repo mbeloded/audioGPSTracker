@@ -13,4 +13,6 @@ public interface Constants {
 	public static int directionSensor = Sensor.TYPE_ORIENTATION;
 	public static int accSensorRate = SensorManager.SENSOR_DELAY_GAME;
 	public static int directionRate = SensorManager.SENSOR_DELAY_GAME;
+	
+	public static final boolean ISDEBUG = true;
 }

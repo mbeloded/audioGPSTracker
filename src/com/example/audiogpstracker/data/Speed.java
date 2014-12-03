@@ -51,8 +51,10 @@ public class Speed implements LocationListener, Constants {
 			if (loc.hasSpeed()) {
 				speed = loc.getSpeed() * 1.0; // need to * 1.0 to get into a
 												// double for some reason...
+				displayDebugInfo("Method: getSpeed()");
 			} else {
 				try {
+					displayDebugInfo("Method: calculate by formula()");
 					// get the distance and time between the current position,
 					// and the previous position.
 					// using (counter - 1) % data_points doesn't wrap properly
@@ -108,6 +110,13 @@ public class Speed implements LocationListener, Constants {
 
     public void displayText(final String speed) {
     	Log.i(LOG, speed);
+    }
+    
+    public void displayDebugInfo(String info) {
+    	if (ISDEBUG)
+    		Log.i(LOG, info);
+    	else
+    		return;
     }
     
     public void onProviderDisabled(String provider) {
