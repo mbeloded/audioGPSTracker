@@ -55,7 +55,7 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener {
 		this.toogleButton	= (ToggleButton) rootView.findViewById(R.id.dmafSnd);
 		this.clearAccBtn		= (Button)	rootView.findViewById(R.id.clearAcc);
 		
-		mDebugTextView = (TextView) rootView.findViewById(R.id.debug_tv);
+		this.mDebugTextView = (TextView) rootView.findViewById(R.id.debug_tv);
 		
 		this.firstFragm = (RelativeLayout) rootView.findViewById(R.id.firstFragm);
 		

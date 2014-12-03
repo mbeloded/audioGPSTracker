@@ -20,6 +20,7 @@ public class Speed implements LocationListener, Constants {
     private Integer units; // Preference integers
     private Integer counter = 0;
     private String unit_string;
+    private String logStr = null;
     
 	public Speed() {
 		//init vars here
@@ -29,6 +30,7 @@ public class Speed implements LocationListener, Constants {
         
         units = R.id.kmph;//by default
         unit_string = MainActivity.getInsatnce().getResources().getString(R.string.title_kmph);
+        logStr = "";
 	}
 	
 	public String getUnitStr(){
@@ -51,10 +53,12 @@ public class Speed implements LocationListener, Constants {
 			if (loc.hasSpeed()) {
 				speed = loc.getSpeed() * 1.0; // need to * 1.0 to get into a
 												// double for some reason...
-				displayDebugInfo("Method: getSpeed()");
+				logStr = "Method: getSpeed()";
+//				displayDebugInfo("Method: getSpeed()");
 			} else {
 				try {
-					displayDebugInfo("Method: calculate by formula()");
+					logStr = "Method: formula()";
+//					displayDebugInfo("Method: calculate by formula()");
 					// get the distance and time between the current position,
 					// and the previous position.
 					// using (counter - 1) % data_points doesn't wrap properly
@@ -70,6 +74,7 @@ public class Speed implements LocationListener, Constants {
 					speed_string = "no speed data\nException:"+e.getLocalizedMessage();
 				}
 				speed = d1 / t1; // m/s
+				speed *= 1000;//WTF?
 			}
 			
 			counter = (counter + 1) % data_points;
@@ -92,9 +97,8 @@ public class Speed implements LocationListener, Constants {
 				break;
 			}
 			
-			String double_speed = String.format("%.4f", speed);
+//			String double_speed = String.format("%.4f", speed);
 			
-			speed *= 1000;//WTF?
 			String format_string = "%0" + padding + "d";
 			
 	    	String value_string = String.format(format_string, speed.intValue());
@@ -103,8 +107,16 @@ public class Speed implements LocationListener, Constants {
 			
 			displayText(speed_string);
 			
-			if(DmafManager.getInstance(MainActivity.getInsatnce()).isNeedToPlaySound())
+			if(DmafManager.getInstance(MainActivity.getInsatnce()).isNeedToPlaySound()) {
 				DmafManager.getInstance(MainActivity.getInsatnce()).setSpeed(speed.floatValue());
+				logStr += "\nsetSpeed("+speed.floatValue()+")";
+			}
+			
+			displayDebugInfo(logStr);
+		} else {
+			logStr = "location is null";
+	        
+	        displayDebugInfo(logStr);
 		}
     }
 
@@ -128,10 +140,29 @@ public class Speed implements LocationListener, Constants {
         // TODO Auto-generated method stub
         Log.i(LOG, "provider enabled : " + provider);
     }
+    
+    private String getStatus(int st) {
+    	String status = null;
+    	switch(st){
+    	case 0:
+    		status = "OUT_OF_SERVICE";
+    		break;
+    	case 1:
+    		status = "TEMPORARILY_UNAVAILABLE";
+    		break;
+    	case 2:
+    		status = "AVAILABLE";
+    		break;
+    	}
+    	return status;
+    }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
         Log.i(LOG, "status changed : " + extras.toString());
+        logStr += "\nstatus changed : " + getStatus(status);
+        
+        displayDebugInfo(logStr);
     }
                
 }
