@@ -68,6 +68,7 @@ public class Speed implements LocationListener, Constants {
 					speed_string = "no speed data\nException:"+e.getLocalizedMessage();
 				}
 				speed = d1 / t1; // m/s
+				speed *= 1000;//WTF?
 			}
 			
 			counter = (counter + 1) % data_points;
@@ -90,9 +91,8 @@ public class Speed implements LocationListener, Constants {
 				break;
 			}
 			
-			String double_speed = String.format("%.4f", speed);
+//			String double_speed = String.format("%.4f", speed);
 			
-			speed *= 1000;//WTF?
 			String format_string = "%0" + padding + "d";
 			
 	    	String value_string = String.format(format_string, speed.intValue());
