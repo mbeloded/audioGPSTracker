@@ -1,121 +1,180 @@
 package com.example.audiogpstracker.data;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import com.example.audiogpstracker.Constants;
-import com.example.audiogpstracker.MainActivity;
-import com.example.audiogpstracker.utils.DmafManager;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.util.Log;
 
-public class Direction implements SensorEventListener, Constants {
+import com.example.audiogpstracker.Constants;
+import com.example.audiogpstracker.MainActivity;
+import com.example.audiogpstracker.datainterfaces.CompassChangeListener;
+import com.example.audiogpstracker.utils.DmafManager;
+import com.example.audiogpstracker.utils.MathUtils;
+
+public class Direction implements SensorEventListener, CompassChangeListener,
+		Constants {
 
 	private static final String LOG = "Direction";
-	
-	private static Direction instance;
-	
+
+	long currentTime = 0;
+
 	private Timer timer;
-	
-	private float lastDegree = 0.0f;
-	
+	private Timer timer2;
+
 	private float currentDegree = 0.0f;
-	private float agoDegree = 0.0f;
-	private float averageDegree = 0.0f;
-	
-	private  Direction() {
+
+	private float changeDegree = 0.0f;
+	private float lastMeanValue = 0.0f;
+
+	private ArrayList<Float> buffer;
+
+	private MainActivity activity;
+
+	private float[] mGravity = new float[3];
+	private float[] mGeomagnetic = new float[3];
+	private float azimuth = 0f;
+
+	public Direction(MainActivity _activity) {
+		activity = _activity;
+
 		timer = new Timer();
-		
-		timer.schedule(new LastDegreeTimer(), 0, 250);
-		timer.schedule(new CurrentDegreeTimer(), 0, 1);
+		timer2 = new Timer();
+
+		buffer = new ArrayList<Float>();
+
+		timer.schedule(new LastDegreeTimer(), 0, 1000);
+		timer2.schedule(new CompassChangeScedule(this), 0, 250);
 	}
-	
-	public Direction getInstance() {
-		if (instance == null)
-			instance = new Direction();
-		return instance;
-	}
-	
-	public void getCompassChange() {
-		averageDegree = currentDegree - agoDegree;
-	}
-	
-	
+
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		// TODO Auto-generated method stub
-		// get the angle around the z-axis rotated
-		if(event.sensor.getType()==directionSensor) {
-			float degree = Math.round(event.values[0]);
-			displayText(Float.toString(degree) + " degrees \nlast: " +
-						Float.toString(lastDegree) + " \nCompass change: " +
-						Float.toString(degree - lastDegree));
-			
-			if (degree == 360 && DmafManager.getInstance(MainActivity.getInsatnce()).isNeedToPlaySound())
-				DmafManager.getInstance(MainActivity.getInsatnce()).playAudio();
-			
-			lastDegree = degree;
-		}
+		final float alpha = 0.97f;
 
+		synchronized (this) {
+
+			if (event.sensor.getType() == accSensor) {
+
+				mGravity[0] = alpha * mGravity[0] + (1 - alpha)
+						* event.values[0];
+				mGravity[1] = alpha * mGravity[1] + (1 - alpha)
+						* event.values[1];
+				mGravity[2] = alpha * mGravity[2] + (1 - alpha)
+						* event.values[2];
+
+			}
+
+			if (event.sensor.getType() == directionSensor) {
+
+				mGeomagnetic[0] = alpha * mGeomagnetic[0] + (1 - alpha)
+						* event.values[0];
+				mGeomagnetic[1] = alpha * mGeomagnetic[1] + (1 - alpha)
+						* event.values[1];
+				mGeomagnetic[2] = alpha * mGeomagnetic[2] + (1 - alpha)
+						* event.values[2];
+
+			}
+
+			float R[] = new float[9];
+			float I[] = new float[9];
+			boolean success = SensorManager.getRotationMatrix(R, I, mGravity,
+					mGeomagnetic);
+			if (success) {
+				float orientation[] = new float[3];
+				SensorManager.getOrientation(R, orientation); 
+				
+				azimuth = (float) Math.toDegrees(orientation[0]); // orientation
+				azimuth = (azimuth + 360) % 360;
+
+				synchronized (buffer) {
+					buffer.add(azimuth);
+				}
+
+			}
+		}
 	}
-	
+
 	public void displayText(final String direction) {
-    	Log.i(LOG, direction);
-    }
-	
-	
-	private class CurrentDegreeTimer extends TimerTask implements SensorEventListener
-	{
-		private float returnedValue = 0.0f;
-		
-		@Override
-		public void onSensorChanged(SensorEvent event) {
-			if(event.sensor.getType()==directionSensor) {
-				returnedValue = Math.round(event.values[0]);
-			}		
-		}
-
-		@Override
-		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			
-		}
-
-		@Override
-		public void run() {
-			currentDegree = returnedValue;
-		}
-		
+		Log.i(LOG, direction);
 	}
-	
-	private class LastDegreeTimer extends TimerTask implements SensorEventListener
-	{
-		private float returnedValue = 0.0f;
 
+	private class LastDegreeTimer extends TimerTask {
 		@Override
-		public void onSensorChanged(SensorEvent event) {
-			if(event.sensor.getType()==directionSensor) {
-				returnedValue = Math.round(event.values[0]);
-			}						
+		public void run() {
+
+			synchronized (buffer) {
+				buffer.clear();
+			}
+
+			/*
+			 * If the earlier mean value is between 330-360 or 0-30 then any
+			 * value on the other side of that line must have either 360
+			 * added/subtracted before calculating the change.
+			 */
+
+			lastMeanValue = currentDegree;
+
 		}
+	}
 
-		@Override
-		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			
-			
+	private class CompassChangeScedule extends TimerTask {
+		private CompassChangeListener compassListener;
+
+		public CompassChangeScedule(CompassChangeListener compassListener) {
+			this.compassListener = compassListener;
 		}
 
 		@Override
 		public void run() {
-			agoDegree = returnedValue;
-		}		
+
+			int size = buffer.size();
+			if (size != 0) {
+
+				currentDegree = MathUtils.meanValue(buffer, lastMeanValue);
+
+				/*
+				 * if(currentDegree>360) { currentDegree -= 360; } else
+				 * if(currentDegree<0) { currentDegree += 360; }
+				 */
+
+				Log.i(LOG, "buffer size(" + size + ") -> currentDegree="
+						+ currentDegree);
+				
+				changeDegree = currentDegree - lastMeanValue;
+				
+				if (changeDegree >= 180.0f)
+					changeDegree -= 360.0f;
+				if (changeDegree <= -180)
+					changeDegree += 360;
+
+				String value_string = String.format("%.0f", currentDegree)
+						+ " degrees\nCompass change: "
+						+ String.format("%.0f", changeDegree);
+
+				displayText(value_string);
+
+				this.compassListener.deltaDegreeValue(changeDegree);
+			}
+
+		}
+	}
+
+	@Override
+	public void deltaDegreeValue(float deltaDegree) {
+		if (DmafManager.getInstance(activity).isNeedToPlaySound()
+				&& (deltaDegree > 1 || deltaDegree < -2)) { 
+			
+			DmafManager.getInstance(activity).onCompassChangePlay(deltaDegree);
+		}
+
 	}
 }

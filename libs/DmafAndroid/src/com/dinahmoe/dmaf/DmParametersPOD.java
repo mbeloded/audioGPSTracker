@@ -71,4 +71,9 @@ public class DmParametersPOD
 	{
 		return DmGetFloatParameter(pod.intPointer, index);
 	}
+	
+	public static long getParamPointer(DmParametersPOD pod)
+	{
+		return pod.intPointer;
+	}
 }

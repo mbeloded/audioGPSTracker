@@ -24,3 +24,5 @@ proguard/
 
 # Log Files
 *.log
+libs/android-support-v4.jar
+libs/splunk-mint-4.0.6.jar

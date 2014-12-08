@@ -12,12 +12,10 @@ import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
-import com.example.audiogpstracker.data.Accelerometer;
 import com.example.audiogpstracker.data.Direction;
 import com.example.audiogpstracker.data.Speed;
 import com.example.audiogpstracker.fragments.FirstFragment;
@@ -25,161 +23,148 @@ import com.example.audiogpstracker.utils.DmafManager;
 import com.example.audiogpstracker.utils.GPSStateManager;
 
 public class MainActivity extends FragmentActivity implements Constants {
-	
+
 	private final String LOG = "MainActivity";
 	private static final String TAG_FIRST_FRAGMENT = "task_fragment";
+
+	private static FirstFragment first;
+
+	private static FragmentManager fragmentManager;
+	private static FragmentTransaction fragmentTransaction;
+
+	private static LocationManager locationManager;
+	private static LocationListener locationListener;
+
+	private static SensorManager sensorManager;
+	private static SensorEventListener accListener;
+	private static SensorEventListener directionListener;
 	
-	private static MainActivity instance = null;
-	
-	private FirstFragment first;
-	
-	private FragmentManager fragmentManager;
-	private FragmentTransaction fragmentTransaction;
-	
-	private LocationManager locationManager;
-	private LocationListener locationListener;
-	
-	private SensorManager sensorManager;
-	private SensorEventListener accListener;
-	private SensorEventListener directionListener;
 	private Sensor accelerometer;
 	private Sensor direction;
-	
-	private Handler handler;
-	
+
+	private static Handler handler;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_main);
 		
-		if (GPSStateManager.getInstance(this).checkGPSEnable()) {
-			init();
-		} else {
-			GPSStateManager.getInstance(this).buildGPSEnableDialog();
-		}		
+		init();
 	}
-	
-	public void init() {
-		
-        // keep screen on
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		
-		//init fragments
-		fragmentManager = getSupportFragmentManager();
-		fragmentTransaction = fragmentManager.beginTransaction();
-		first = (FirstFragment) fragmentManager.findFragmentByTag(TAG_FIRST_FRAGMENT);
 
-	    // If the Fragment is non-null, then it is being retained
-	    // over a configuration change.
-	    if (first == null) {
-	    	first = new FirstFragment();
-			fragmentTransaction.add(R.id.container, first, TAG_FIRST_FRAGMENT).commitAllowingStateLoss();
-	    }
-		
-		handler = new Handler();
-		
-		// use the LocationManager class to obtain GPS locations
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		
-		for(String s : locationManager.getAllProviders())
-		{
-			Log.d(LOG, "Providers : " + s);
+	public void init() {
+
+		// keep screen on
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+		// init fragments
+		if(fragmentManager==null)
+			fragmentManager = getSupportFragmentManager();
+		if(fragmentTransaction == null)
+			fragmentTransaction = fragmentManager.beginTransaction();
+
+		// If the Fragment is non-null, then it is being retained
+		// over a configuration change.
+		if (first == null) {
+			first = new FirstFragment();
+			fragmentTransaction.add(R.id.container, first, TAG_FIRST_FRAGMENT)
+					.commitAllowingStateLoss();
+		}
+		else {
+			first = (FirstFragment) fragmentManager
+				.findFragmentByTag(TAG_FIRST_FRAGMENT);
 		}
 
-		instance = this;
-		
-        locationListener = new Speed(){
-        	@Override
-        	public void displayText(final String speed){
-//        		Log.i(LOG, speed);
-//        		handler.post(new Runnable(){
-//        			public void run(){
-        				if(first.speedField!=null){
-        					first.speedField.setText(getResources().getString(R.string.gps_speed) +
-	        						" " + speed + " " + getUnitStr());
-        				}
-//        			}
-//        		});	
-        	}
-        	
-        	@Override
-        	public void displayTextSpeed(final String speed) {
-        		if(first.speedSecondField!=null) {
-					first.speedSecondField.setText(getResources().getString(R.string.gps_speed_formula) +
-    						" " + speed + " " + getUnitStr());
-				}
-        	}
-        	
-        	@Override
-        	public void displayDebugInfo(String info) {
-        		if (ISDEBUG) 
-        			first.mDebugTextView.setText(info);
-        		else
-        			first.mDebugTextView.setText("");
-        	}
-        };
-        
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        if (sensorManager.getDefaultSensor(accSensor) != null) {
+		if (handler == null ) handler = new Handler();
 
-        	accelerometer = sensorManager.getDefaultSensor(accSensor);
-        	
-	        accListener = new Accelerometer(){
-	        	@Override
-	        	public void displayText(final String acc){
-	        		handler.post(new Runnable(){
-	        			public void run(){
-	        				if(first.acceleration!=null) {
-	        					first.acceleration.setText(getResources().getString(R.string.acc_speed) +
-	        						" " + acc);
-	        				}
-	        			}
-	        		});
-	        	}
-	        };
-	        
-	        sensorManager.registerListener(accListener, accelerometer, accSensorRate);
-        }
-        else {
-        	handler.post(new Runnable(){
-    			public void run(){
-    				if(first.acceleration!=null){
-    					first.acceleration.setText(R.string.no_accelerometer);
-    				}
-    			}
-        	});
-        }
-        
-        if (sensorManager.getDefaultSensor(directionSensor) != null) {
-        	
-        	direction = sensorManager.getDefaultSensor(directionSensor);
-        	
-	        directionListener = new Direction(){
-	        	@Override
-	        	public void displayText(final String direction) {
-	        		handler.post(new Runnable(){
-	        			public void run(){
-	        				if(first.direction!=null){
-	        					first.direction.setText(getResources().getString(R.string.direction) +
-	        						" " + direction);
-	        				}
-	        			}
-	        		});
-	        	}
-	        };
-        } else {
-        	handler.post(new Runnable(){
-    			public void run(){
-    				if(first.direction!=null){
-    					first.direction.setText(R.string.no_direction);
-    				}
-    			}
-        	});
-        }
-        
-        DmafManager.getInstance(this).init();
+		// use the LocationManager class to obtain GPS locations
+		if(locationManager == null)
+			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		if(locationListener == null) {
+			locationListener = new Speed(this) {
+				@Override
+				public void displayText(final String speed) {
+					handler.post(new Runnable() {
+						public void run() {
+							if (first.speedField != null) {
+								first.speedField.setText(getResources().getString(
+										R.string.gps_speed)
+										+ " " + speed + " " + getUnitStr());
+							}
+						}
+					});
+				}
+	
+				@Override
+				public void displayDebugInfo(final String info) {
+					handler.post(new Runnable() {
+						public void run() {
+							if (ISDEBUG)
+								first.mDebugTextView.setText(info);
+							else
+								first.mDebugTextView.setText("");
+								}
+					});
+				}
+	
+				@Override
+				public void displaySatStatus(String[] status) {
+					if (first.satValue != null) {
+						first.satValue.setText(getResources().getString(
+								R.string.sattelites)
+								+ " " + status[0] + "/" + status[1]);
+					}
+				}
+	
+				@Override
+				public void displayAccStatus(String status) {
+					if (first.accuracyValue != null) {
+						first.accuracyValue.setText(getResources().getString(
+								R.string.accuracy)
+								+ " " + status);
+					}
+				}
+			};
+		}
+
+		if(sensorManager == null)
+			sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+		if (sensorManager.getDefaultSensor(directionSensor) != null) {
+
+			if(direction == null)
+				direction = sensorManager.getDefaultSensor(directionSensor);
+
+			if(directionListener == null) {
+				directionListener = new Direction(this) {
+					@Override
+					public void displayText(final String direction) {
+						handler.post(new Runnable() {
+							public void run() {
+								if (first.direction != null) {
+									first.direction.setText(getResources()
+											.getString(R.string.direction)
+											+ " "
+											+ direction);
+								}
+							}
+						});
+					}
+				};
+			} else {
+//				handler.post(new Runnable() {
+//					public void run() {
+//						if (first.direction != null) {
+//							first.direction.setText(R.string.no_direction);
+//						}
+//					}
+//				});
+			}
+		}
+
 	}
 
 	@Override
@@ -200,53 +185,63 @@ public class MainActivity extends FragmentActivity implements Constants {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (GPSStateManager.getInstance(this).checkGPSEnable())
-			unregisterListeners();			
+		
+		DmafManager.getInstance(this).stopPlaying();
+		
+		unregisterListeners();
+		
 	}
-	
-	@Override
-    public void onResume() {
-        super.onResume();
-        if (GPSStateManager.getInstance(this).checkGPSEnable())
-        	registerListeners();
-    }
-	
-	private void registerListeners() {
-		locationManager.requestLocationUpdates(provider, timeInterval, minDistance, locationListener);
-        sensorManager.registerListener(accListener, accelerometer, accSensorRate);
-     // for the system's orientation sensor registered listeners
-        sensorManager.registerListener(directionListener, direction, directionRate);
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		registerListeners();
 	}
-	
+
+	private void registerListeners() {
+		if (GPSStateManager.getInstance(this).checkGPSEnable())
+			locationManager.requestLocationUpdates(provider, timeInterval,
+					minDistance, locationListener);
+		else {
+			GPSStateManager.getInstance(this).buildGPSEnableDialog();
+		}
+
+		sensorManager.registerListener(directionListener, accelerometer,
+				accSensorRate);
+		sensorManager.registerListener(directionListener, direction,
+				directionRate);
+	}
+
 	private void unregisterListeners() {
-		locationManager.removeUpdates(locationListener);
+		// to stop listeners and save battery
+
+		if (GPSStateManager.getInstance(this).checkGPSEnable())
+			locationManager.removeUpdates(locationListener);
+
 		sensorManager.unregisterListener(accListener);
-		// to stop the listener and save battery
 		sensorManager.unregisterListener(directionListener);
 	}
-	
-	public static MainActivity getInsatnce() {
-		if (instance != null) 
-			return instance;
-		return null;
+
+	public LocationManager getLocationManager() {
+		return locationManager;
 	}
 
-//	@Override
-//	public void onDataPass(String data) {
-//	    Log.d("LOG","hello " + data);
-//	    first.speedField.setText(data);
-//	}
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		DmafManager.getInstance(this).stopPlaying();
+		unregisterListeners();
+	}
 
-	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode != 0) return;
-		
+		if (resultCode != 0)
+			return;
+
 		switch (requestCode) {
 		case 911:
 			if (GPSStateManager.getInstance(this).checkGPSEnable()) {
