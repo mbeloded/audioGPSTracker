@@ -15,6 +15,7 @@ import com.example.audiogpstracker.MainActivity;
 import com.example.audiogpstracker.datainterfaces.CompassChangeListener;
 import com.example.audiogpstracker.utils.DmafManager;
 import com.example.audiogpstracker.utils.MathUtils;
+import com.example.audiogpstracker.utils.MessageManager;
 
 public class Direction implements SensorEventListener, CompassChangeListener,
 		Constants {
@@ -70,7 +71,6 @@ public class Direction implements SensorEventListener, CompassChangeListener,
 						* event.values[1];
 				mGravity[2] = alpha * mGravity[2] + (1 - alpha)
 						* event.values[2];
-
 			}
 
 			if (event.sensor.getType() == directionSensor) {
@@ -90,10 +90,11 @@ public class Direction implements SensorEventListener, CompassChangeListener,
 					mGeomagnetic);
 			if (success) {
 				float orientation[] = new float[3];
-				SensorManager.getOrientation(R, orientation); 
-				
+				SensorManager.getOrientation(R, orientation);
+				// Log.d(TAG, "azimuth (rad): " + azimuth);
 				azimuth = (float) Math.toDegrees(orientation[0]); // orientation
 				azimuth = (azimuth + 360) % 360;
+				// Log.d(TAG, "azimuth (deg): " + azimuth);
 
 				synchronized (buffer) {
 					buffer.add(azimuth);
@@ -104,13 +105,14 @@ public class Direction implements SensorEventListener, CompassChangeListener,
 	}
 
 	public void displayText(final String direction) {
-		Log.i(LOG, direction);
+//		Log.i(LOG, direction);
+		MessageManager.get().displayDirectionMessage(direction);
 	}
 
 	private class LastDegreeTimer extends TimerTask {
 		@Override
 		public void run() {
-
+			// Log.i(LOG, "buffer_size_for_1_sec = " + buffer.size());
 			synchronized (buffer) {
 				buffer.clear();
 			}
@@ -146,8 +148,8 @@ public class Direction implements SensorEventListener, CompassChangeListener,
 				 * if(currentDegree<0) { currentDegree += 360; }
 				 */
 
-				Log.i(LOG, "buffer size(" + size + ") -> currentDegree="
-						+ currentDegree);
+//				Log.i(LOG, "buffer size(" + size + ") -> currentDegree="
+//						+ currentDegree);
 				
 				changeDegree = currentDegree - lastMeanValue;
 				
@@ -164,17 +166,36 @@ public class Direction implements SensorEventListener, CompassChangeListener,
 
 				this.compassListener.deltaDegreeValue(changeDegree);
 			}
-
 		}
 	}
 
 	@Override
 	public void deltaDegreeValue(float deltaDegree) {
 		if (DmafManager.getInstance(activity).isNeedToPlaySound()
-				&& (deltaDegree > 1 || deltaDegree < -2)) { 
-			
+				&& (deltaDegree > 1 || deltaDegree < -2)) {
+			// Log.i(LOG, "value = " + deltaDegree);
 			DmafManager.getInstance(activity).onCompassChangePlay(deltaDegree);
 		}
 
+	}
+	
+	public void destructor() {
+		if(timer != null)
+			timer.cancel();
+		
+		if(timer2 != null) 
+			timer2.cancel();
+		
+		if(buffer != null) {
+			buffer.clear();
+		}
+		
+		if(mGravity != null)
+			mGravity = null;
+		
+		if(mGeomagnetic != null)
+			mGeomagnetic = null;
+		
+		activity = null;
 	}
 }

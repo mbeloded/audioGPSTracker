@@ -7,17 +7,13 @@ import android.os.Handler;
 
 import com.splunk.mint.Mint;
 
-public class SplashActivity extends Activity {
-	
-	private static Activity instance = null;
-	
-	private final String STATE_ACTIVITY = "activity_instance";
+public class SplashActivity extends Activity implements Constants {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {		
 		super.onCreate(savedInstanceState);
 		
-		Mint.initAndStartSession(SplashActivity.this, "f72bfede");
+		Mint.initAndStartSession(SplashActivity.this, mint_key);
 		
 		setContentView(R.layout.activity_splash);
 		
@@ -28,9 +24,8 @@ public class SplashActivity extends Activity {
 				Intent intent = new Intent(SplashActivity.this, MainActivity.class);
 				startActivity(intent);
 				SplashActivity.this.finish();
-				
 			}
-		}, 3000);
+		}, splash_time);
 		
 	}
 	

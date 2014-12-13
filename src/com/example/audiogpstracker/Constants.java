@@ -14,5 +14,8 @@ public interface Constants {
 	public static int accSensorRate = SensorManager.SENSOR_DELAY_GAME;
 	public static int directionRate = SensorManager.SENSOR_DELAY_GAME;//SensorManager.SENSOR_DELAY_UI;
 
+	public static int splash_time = 3000;
+	public static String mint_key = "f72bfede";
+	
 	public static final boolean ISDEBUG = true;
 }

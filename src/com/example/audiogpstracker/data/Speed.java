@@ -1,5 +1,7 @@
 package com.example.audiogpstracker.data;
 
+import java.util.TimerTask;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -9,6 +11,9 @@ import com.example.audiogpstracker.Constants;
 import com.example.audiogpstracker.MainActivity;
 import com.example.audiogpstracker.R;
 import com.example.audiogpstracker.utils.DmafManager;
+import com.example.audiogpstracker.utils.MathUtils;
+import com.example.audiogpstracker.utils.MessageManager;
+import com.example.audiogpstracker.utils.PreferencesManager;
 
 public class Speed implements LocationListener, Constants {
 
@@ -31,10 +36,13 @@ public class Speed implements LocationListener, Constants {
 		positions = new Double[data_points][2];
 		times = new Long[data_points];
 
-		units = R.id.kmph;// by default
+		units = PreferencesManager.get().getUnitType();// by default
 		unit_string = activity.getResources()
 				.getString(R.string.title_kmph);
 		logStr = "";
+		
+//		Timer timer = new Timer();
+//		timer.schedule(new TestSoundClass(), 3000, 250);
 	}
 
 	public String getUnitStr() {
@@ -42,7 +50,7 @@ public class Speed implements LocationListener, Constants {
 	}
 
 	public void onLocationChanged(Location loc) {   
-		loc = activity.getLocationManager().getLastKnownLocation(provider);
+//		loc = activity.getLocationManager().getLastKnownLocation(provider);
 		if (loc != null) {
 //			Double d1;
 //			Long t1;
@@ -58,7 +66,7 @@ public class Speed implements LocationListener, Constants {
 			if (loc.hasSpeed()) {
 				speed = loc.getSpeed() * 1.0; // need to * 1.0 to get into a
 												// double for some reason...
-				logStr = "Method: getSpeed()";
+//				logStr = "Method: getSpeed()";
 			} 
 //			else {
 //				logStr = "Method: formula()";
@@ -85,7 +93,7 @@ public class Speed implements LocationListener, Constants {
 			
 			counter = (counter + 1) % data_points;
 
-			Log.i(LOG, "speed: "+speed+"\nspeed2:"+speed2);
+//			Log.i(LOG, "speed: "+speed+"\nspeed2:"+speed2);
 			
 			// convert from m/s to specified units
 			switch (units) {
@@ -114,8 +122,6 @@ public class Speed implements LocationListener, Constants {
 			
 			if(DmafManager.getInstance(activity).isNeedToPlaySound()) {
 				float speed_gps = speed.floatValue();
-				
-//				if(speed_gps >= 0.f && speed_gps <= 25.f) 
 				{
 					DmafManager.getInstance(activity).setSpeed(speed_gps);
 					logStr += "\nsetSpeed("+speed_gps+")";
@@ -131,7 +137,8 @@ public class Speed implements LocationListener, Constants {
     }
 
 	public void displayText(final String speed) {
-		Log.i(LOG, speed);
+//		Log.i(LOG, speed);
+		MessageManager.get().displaySpeedMessage(speed);
 	}
 	
 	public void displayFormulaSpeed(String speed) {
@@ -147,22 +154,22 @@ public class Speed implements LocationListener, Constants {
 	}
 
 	public void displayDebugInfo(String info) {
-		if (ISDEBUG)
-			Log.i(LOG, info);
-		else
-			return;
+//		if (ISDEBUG)
+//			Log.i(LOG, info);
+//		else
+//			return;
 	}
 
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
-		Log.i(LOG, "provider disabled : " + provider);
+//		Log.i(LOG, "provider disabled : " + provider);
 		logStr += "\nprovider disabled : " + provider;
 		displayDebugInfo(logStr);
 	}
 
 	public void onProviderEnabled(String provider) {
 		// TODO Auto-generated method stub
-		Log.i(LOG, "provider enabled : " + provider);
+//		Log.i(LOG, "provider enabled : " + provider);
 		logStr += "\nprovider enabled : " + provider;
 		displayDebugInfo(logStr);
 	}
@@ -185,7 +192,7 @@ public class Speed implements LocationListener, Constants {
 
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
-		Log.i(LOG, "status changed : " + extras.toString());
+//		Log.i(LOG, "status changed : " + extras.toString());
 		logStr += "\nstatus changed : " + getStatus(status);
 		
 		displayDebugInfo(logStr);
@@ -193,5 +200,36 @@ public class Speed implements LocationListener, Constants {
 		displaySatStatus(new String[]{extras.getString("sattelites"), "20"});
 		displayAccStatus(getStatus(status));
 	}
+	
+	public void destructor()
+	{
+		activity = null;
+		
+		if(times != null)
+			times = null;
+		
+		if(positions != null)
+			positions = null;
+	}
 
+	private class TestSoundClass extends TimerTask {
+		
+		public TestSoundClass() {
+			
+		}
+		
+		@Override
+		public void run() {
+			/*
+			 * for tests
+			 */
+			if(DmafManager.getInstance(activity).isNeedToPlaySound()) {
+				float speed_gps = MathUtils.randFloat(0, 50);
+				{
+					DmafManager.getInstance(activity).setSpeed(speed_gps);
+				}
+			}
+		}
+	}
+	
 }

@@ -2,8 +2,7 @@ package com.example.audiogpstracker.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import android.util.Log;
+import java.util.Random;
 
 public class MathUtils {
 
@@ -124,8 +123,11 @@ public class MathUtils {
 				}
 			}
 
+			if(length == 0)
+				return smoothVal;
+			
 			smoothVal = sum / length;
-			Log.i("LOG", "newMeanValue = " + smoothVal);
+//			Log.i("LOG", "newMeanValue = " + smoothVal);
 
 			if (smoothVal > 360)
 				smoothVal = smoothVal - 360.0f;
@@ -136,4 +138,17 @@ public class MathUtils {
 		return smoothVal;
 	}
 
+	public static float randFloat(int min, int max) {
+
+	    // NOTE: Usually this should be a field rather than a method
+	    // variable so that it is not re-seeded every call.
+	    Random rand = new Random();
+
+	    // nextInt is normally exclusive of the top value,
+	    // so add 1 to make it inclusive
+	    float randomNum = (float)rand.nextInt((max - min) + 1) + min;
+
+	    return randomNum;
+	}
+	
 }

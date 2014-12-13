@@ -26,7 +26,6 @@ public class DmafManager implements IDmafListener {
 
 	private DmafManager(Activity activity) {
 		mActivity = activity;
-
 	}
 
 	public static DmafManager getInstance(Activity activity) {

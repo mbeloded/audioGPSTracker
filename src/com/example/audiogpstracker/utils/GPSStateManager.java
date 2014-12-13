@@ -11,7 +11,6 @@ import android.os.Handler;
 import com.example.audiogpstracker.R;
 
 public class GPSStateManager {
-	private final String LOG = GPSStateManager.class.getSimpleName();
 
 	private Activity mActivity;
 	private Handler mHandler;

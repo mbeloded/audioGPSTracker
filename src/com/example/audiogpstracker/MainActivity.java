@@ -10,8 +10,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
@@ -24,25 +22,24 @@ import com.example.audiogpstracker.utils.GPSStateManager;
 
 public class MainActivity extends FragmentActivity implements Constants {
 
-	private final String LOG = "MainActivity";
 	private static final String TAG_FIRST_FRAGMENT = "task_fragment";
 
-	private static FirstFragment first;
+	private FirstFragment first;
 
-	private static FragmentManager fragmentManager;
-	private static FragmentTransaction fragmentTransaction;
+//	private FragmentManager fragmentManager;
+//	private FragmentTransaction fragmentTransaction;
 
-	private static LocationManager locationManager;
-	private static LocationListener locationListener;
+	private LocationManager locationManager;
+	private LocationListener locationListener;
 
-	private static SensorManager sensorManager;
-	private static SensorEventListener accListener;
-	private static SensorEventListener directionListener;
+	private SensorManager sensorManager;
+	private SensorEventListener accListener;
+	private SensorEventListener directionListener;
 	
 	private Sensor accelerometer;
 	private Sensor direction;
 
-	private static Handler handler;
+	private Handler handler;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +48,23 @@ public class MainActivity extends FragmentActivity implements Constants {
 
 		setContentView(R.layout.activity_main);
 		
+		if (savedInstanceState != null) { // saved instance state, fragment may exist
+           // look up the instance that already exists by tag
+			first = (FirstFragment)  
+              getSupportFragmentManager().findFragmentByTag(TAG_FIRST_FRAGMENT);
+        } else if (first == null) { 
+           // only create fragment if they haven't been instantiated already
+        	first = new FirstFragment();
+        }
+		
 		init();
+		
+		if (!first.isInLayout()) {
+            getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, first, TAG_FIRST_FRAGMENT)
+                .commit();
+        }
 	}
 
 	public void init() {
@@ -60,31 +73,31 @@ public class MainActivity extends FragmentActivity implements Constants {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		// init fragments
-		if(fragmentManager==null)
-			fragmentManager = getSupportFragmentManager();
-		if(fragmentTransaction == null)
-			fragmentTransaction = fragmentManager.beginTransaction();
+//		if(fragmentManager==null)
+//			fragmentManager = getSupportFragmentManager();
+//		if(fragmentTransaction == null)
+//			fragmentTransaction = fragmentManager.beginTransaction();
 
-		// If the Fragment is non-null, then it is being retained
-		// over a configuration change.
-		if (first == null) {
-			first = new FirstFragment();
-			fragmentTransaction.add(R.id.container, first, TAG_FIRST_FRAGMENT)
-					.commitAllowingStateLoss();
-		}
-		else {
-			first = (FirstFragment) fragmentManager
-				.findFragmentByTag(TAG_FIRST_FRAGMENT);
-		}
+//		// If the Fragment is non-null, then it is being retained
+//		// over a configuration change.
+//		if (first == null) {
+//			first = new FirstFragment();
+//			fragmentTransaction.add(R.id.container, first, TAG_FIRST_FRAGMENT)
+//					.commitAllowingStateLoss();
+//		}
+//		else {
+//			first = (FirstFragment) fragmentManager
+//				.findFragmentByTag(TAG_FIRST_FRAGMENT);
+//		}
 
 		if (handler == null ) handler = new Handler();
 
 		// use the LocationManager class to obtain GPS locations
-		if(locationManager == null)
+//		if(locationManager == null)
 			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-		if(locationListener == null) {
-			locationListener = new Speed(this) {
+//		if(locationListener == null) {
+			locationListener = new Speed(this)/* {
 				@Override
 				public void displayText(final String speed) {
 					handler.post(new Runnable() {
@@ -127,19 +140,49 @@ public class MainActivity extends FragmentActivity implements Constants {
 								+ " " + status);
 					}
 				}
-			};
-		}
+			}*/;
+//		}
 
-		if(sensorManager == null)
+//		if(sensorManager == null)
 			sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		
+		if (sensorManager.getDefaultSensor(accSensor) != null) {
+
+			accelerometer = sensorManager.getDefaultSensor(accSensor);
+
+//			accListener = new Accelerometer() {
+//				@Override
+//				public void displayText(final String acc) {
+//					handler.post(new Runnable() {
+//						public void run() {
+//							if (first.acceleration != null) {
+//								first.acceleration.setText(getResources()
+//										.getString(R.string.acc_speed)
+//										+ " "
+//										+ acc);
+//							}
+//						}
+//					});
+//				}
+//			};
+//
+//		} else {
+//			handler.post(new Runnable() {
+//				public void run() {
+//					if (first.acceleration != null) {
+//						first.acceleration.setText(R.string.no_accelerometer);
+//					}
+//				}
+//			});
+		}
 
 		if (sensorManager.getDefaultSensor(directionSensor) != null) {
 
-			if(direction == null)
+//			if(direction == null)
 				direction = sensorManager.getDefaultSensor(directionSensor);
 
-			if(directionListener == null) {
-				directionListener = new Direction(this) {
+//			if(directionListener == null) {
+				directionListener = new Direction(this)/* {
 					@Override
 					public void displayText(final String direction) {
 						handler.post(new Runnable() {
@@ -153,7 +196,7 @@ public class MainActivity extends FragmentActivity implements Constants {
 							}
 						});
 					}
-				};
+				}*/;
 			} else {
 //				handler.post(new Runnable() {
 //					public void run() {
@@ -162,7 +205,7 @@ public class MainActivity extends FragmentActivity implements Constants {
 //						}
 //					}
 //				});
-			}
+//			}
 		}
 
 	}
@@ -235,6 +278,15 @@ public class MainActivity extends FragmentActivity implements Constants {
 		super.onDestroy();
 		DmafManager.getInstance(this).stopPlaying();
 		unregisterListeners();
+		locationManager = null;
+		sensorManager   = null;
+		accListener = null;
+		
+		((Direction)directionListener).destructor();
+		((Speed)locationListener).destructor();
+		
+		directionListener = null;
+		locationListener = null;
 	}
 
 	@Override
