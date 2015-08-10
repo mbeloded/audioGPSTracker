@@ -127,6 +127,7 @@ public class Dmaf
 	{
 		DmDeinitialize(dmafPointer);
 		callbacks.clear();
+		initialized = false;
 	}
 	
 	public float getCurrentTime()

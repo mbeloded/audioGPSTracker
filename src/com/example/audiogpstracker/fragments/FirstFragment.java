@@ -1,6 +1,5 @@
 package com.example.audiogpstracker.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -40,24 +39,10 @@ public class FirstFragment extends Fragment implements OnCheckedChangeListener, 
 
 	public TextView mDebugTextView;
 	private Handler handler;
-
-	@Override
-	public void onAttach(Activity a) {
-		super.onAttach(a);
-//		MessageManager.get().addListener(this);
-	}
-//	
-//	@Override
-//	public void onDetach() {
-//		super.onDetach();
-//		MessageManager.get().removeListener(this);
-//	}
-
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
-//		setRetainInstance(true);
 
 		rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);

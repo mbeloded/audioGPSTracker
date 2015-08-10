@@ -26,9 +26,6 @@ public class MainActivity extends FragmentActivity implements Constants {
 
 	private FirstFragment first;
 
-//	private FragmentManager fragmentManager;
-//	private FragmentTransaction fragmentTransaction;
-
 	private LocationManager locationManager;
 	private LocationListener locationListener;
 
@@ -72,140 +69,28 @@ public class MainActivity extends FragmentActivity implements Constants {
 		// keep screen on
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		// init fragments
-//		if(fragmentManager==null)
-//			fragmentManager = getSupportFragmentManager();
-//		if(fragmentTransaction == null)
-//			fragmentTransaction = fragmentManager.beginTransaction();
-
-//		// If the Fragment is non-null, then it is being retained
-//		// over a configuration change.
-//		if (first == null) {
-//			first = new FirstFragment();
-//			fragmentTransaction.add(R.id.container, first, TAG_FIRST_FRAGMENT)
-//					.commitAllowingStateLoss();
-//		}
-//		else {
-//			first = (FirstFragment) fragmentManager
-//				.findFragmentByTag(TAG_FIRST_FRAGMENT);
-//		}
-
 		if (handler == null ) handler = new Handler();
 
 		// use the LocationManager class to obtain GPS locations
-//		if(locationManager == null)
-			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-//		if(locationListener == null) {
-			locationListener = new Speed(this)/* {
-				@Override
-				public void displayText(final String speed) {
-					handler.post(new Runnable() {
-						public void run() {
-							if (first.speedField != null) {
-								first.speedField.setText(getResources().getString(
-										R.string.gps_speed)
-										+ " " + speed + " " + getUnitStr());
-							}
-						}
-					});
-				}
-	
-				@Override
-				public void displayDebugInfo(final String info) {
-					handler.post(new Runnable() {
-						public void run() {
-							if (ISDEBUG)
-								first.mDebugTextView.setText(info);
-							else
-								first.mDebugTextView.setText("");
-								}
-					});
-				}
-	
-				@Override
-				public void displaySatStatus(String[] status) {
-					if (first.satValue != null) {
-						first.satValue.setText(getResources().getString(
-								R.string.sattelites)
-								+ " " + status[0] + "/" + status[1]);
-					}
-				}
-	
-				@Override
-				public void displayAccStatus(String status) {
-					if (first.accuracyValue != null) {
-						first.accuracyValue.setText(getResources().getString(
-								R.string.accuracy)
-								+ " " + status);
-					}
-				}
-			}*/;
-//		}
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-//		if(sensorManager == null)
-			sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		locationListener = new Speed(this);
+
+		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		
 		if (sensorManager.getDefaultSensor(accSensor) != null) {
 
 			accelerometer = sensorManager.getDefaultSensor(accSensor);
 
-//			accListener = new Accelerometer() {
-//				@Override
-//				public void displayText(final String acc) {
-//					handler.post(new Runnable() {
-//						public void run() {
-//							if (first.acceleration != null) {
-//								first.acceleration.setText(getResources()
-//										.getString(R.string.acc_speed)
-//										+ " "
-//										+ acc);
-//							}
-//						}
-//					});
-//				}
-//			};
-//
-//		} else {
-//			handler.post(new Runnable() {
-//				public void run() {
-//					if (first.acceleration != null) {
-//						first.acceleration.setText(R.string.no_accelerometer);
-//					}
-//				}
-//			});
 		}
 
 		if (sensorManager.getDefaultSensor(directionSensor) != null) {
 
-//			if(direction == null)
-				direction = sensorManager.getDefaultSensor(directionSensor);
+			direction = sensorManager.getDefaultSensor(directionSensor);
 
-//			if(directionListener == null) {
-				directionListener = new Direction(this)/* {
-					@Override
-					public void displayText(final String direction) {
-						handler.post(new Runnable() {
-							public void run() {
-								if (first.direction != null) {
-									first.direction.setText(getResources()
-											.getString(R.string.direction)
-											+ " "
-											+ direction);
-								}
-							}
-						});
-					}
-				}*/;
-			} else {
-//				handler.post(new Runnable() {
-//					public void run() {
-//						if (first.direction != null) {
-//							first.direction.setText(R.string.no_direction);
-//						}
-//					}
-//				});
-//			}
+			directionListener = new Direction(this);
+			
 		}
 
 	}
@@ -242,6 +127,7 @@ public class MainActivity extends FragmentActivity implements Constants {
 	@Override
 	public void onResume() {
 		super.onResume();
+		DmafManager.getInstance(this).init();
 		registerListeners();
 	}
 
